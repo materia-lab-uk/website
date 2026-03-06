@@ -37,12 +37,11 @@
             <div class="flex justify-between items-start mb-3">
               <div>
                 <h3 class="text-lg font-medium group-hover:text-accent transition-colors">
-                  {sub.name}
-                  {#if sub.company}
-                    <span class="text-text-muted font-normal">— {sub.company}</span>
-                  {/if}
+                  {sub.title || 'Untitled Project'}
                 </h3>
-                <p class="text-sm text-text-muted">{sub.email}</p>
+                <p class="text-sm text-text-muted">
+                  {sub.name}{#if sub.company} — {sub.company}{/if} &middot; {sub.email}
+                </p>
               </div>
               <div class="flex items-center gap-3">
                 <span class="font-mono text-xs px-2 py-1 rounded {

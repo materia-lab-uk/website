@@ -74,6 +74,7 @@ export const POST: RequestHandler = async ({ request, platform, locals, getClien
 		files: uploadedFiles,
 		createdAt: new Date().toISOString(),
 		status: 'queued',
+		title: null,
 		assessment: null,
 		messages: [],
 	};
@@ -85,6 +86,7 @@ export const POST: RequestHandler = async ({ request, platform, locals, getClien
 
 		const assessment = await generateAssessment(submission, apiKey);
 		submission.assessment = assessment;
+		submission.title = (assessment?.title as string) || null;
 		submission.status = assessment ? 'ready' : 'queued';
 
 		await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });

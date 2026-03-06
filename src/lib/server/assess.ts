@@ -1,19 +1,22 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-const SYSTEM_PROMPT = `You are an expert engineering consultant at Materia Lab, a boutique engineering and technology consultancy founded by Dr Nicole Martin. Nicole has 12+ years across Formula One, aerospace, robotics, and product development. She designs complete embedded robotic systems from the ground up: mechanical, electronic, PCB, firmware, control systems, and software.
+const SYSTEM_PROMPT = `You are writing a project assessment on behalf of Materia Lab, a boutique engineering and technology consultancy founded by Dr Nicole Martin. Nicole has 12+ years across Formula One, aerospace, robotics, and product development. She designs complete embedded robotic systems from the ground up: mechanical, electronic, PCB, firmware, control systems, and software.
 
-Given a project enquiry, write a concise, professional project assessment. Be specific and technical where possible. Structure your response as JSON with these fields:
+This assessment will be read by the CLIENT — the person who submitted the enquiry. Write it addressed to them directly. Do NOT write instructions for the consultant (e.g. "Contact client" or "Schedule a call with them"). Instead, frame everything as what the client should expect and what their next steps are.
 
-- "summary": 2-3 sentence plain-English summary of what the client wants
-- "feasibility": your honest assessment of technical feasibility (2-3 sentences)
-- "approach": bullet list (as array of strings) of how Materia Lab would tackle this
+Structure your response as JSON with these fields:
+
+- "title": a short, descriptive project title (3-6 words, e.g. "Autonomous Inspection Robot", "Force-Feedback Rehabilitation Device")
+- "summary": 2-3 sentence plain-English summary of what you're looking to build, addressed to the client
+- "feasibility": honest assessment of technical feasibility (2-3 sentences), addressed to the client
+- "approach": bullet list (as array of strings) of how we would tackle this project
 - "recommended_service": one of "Feasibility Sprint", "Concept Development", "Product Development", or "Fractional CTO"
 - "estimated_timeline": realistic timeline estimate
 - "estimated_budget_range": rough budget range in GBP
-- "key_risks": array of 2-3 key technical risks or unknowns
-- "next_steps": array of 2-3 concrete next steps
+- "key_risks": array of 2-3 key technical risks or unknowns the client should be aware of
+- "next_steps": array of 2-3 concrete next steps for the client (e.g. "Book a discovery call to discuss requirements in detail", "Provide CAD files for the existing enclosure", "We'll prepare a detailed proposal within 5 working days")
 
-Be honest. If something sounds unrealistic, say so. If more info is needed, say what's missing.`;
+Be honest and direct. If something sounds unrealistic, say so. If more info is needed, tell the client what you need from them.`;
 
 export interface Message {
 	id: string;
@@ -45,6 +48,7 @@ export interface Submission {
 	files: UploadedFile[];
 	createdAt: string;
 	status: 'queued' | 'processing' | 'ready';
+	title: string | null;
 	assessment: Record<string, unknown> | null;
 	messages: Message[];
 }
@@ -134,6 +138,7 @@ export async function processQueue(kv: KVNamespace, apiKey: string): Promise<str
 	// Generate
 	const assessment = await generateAssessment(submission, apiKey);
 	submission.assessment = assessment;
+	submission.title = (assessment?.title as string) || null;
 	submission.status = 'ready';
 	await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
 

@@ -91,7 +91,7 @@
 
     {:else}
       <h1 class="text-3xl md:text-4xl font-light tracking-tight mb-2">
-        {submission.company ? `${submission.company} —` : ''} Project Assessment
+        {submission.title || (submission.company ? `${submission.company} — Project Assessment` : 'Project Assessment')}
       </h1>
       <p class="text-sm text-text-muted mb-10">
         Prepared for {submission.name} &middot; {new Date(submission.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
