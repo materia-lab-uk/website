@@ -1,0 +1,2 @@
+name = "materia-lab-website"
+compatibility_flags = ["nodejs_compat"]
