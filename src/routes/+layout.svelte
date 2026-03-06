@@ -2,6 +2,9 @@
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import Logo from '$lib/components/Logo.svelte';
+	import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
+	import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte';
+	import UserButton from 'clerk-sveltekit/client/UserButton.svelte';
 
 	let { children } = $props();
 </script>
@@ -21,9 +24,18 @@
 			<a href="/#services" class="text-sm text-text-muted hover:text-accent transition-colors">Services</a>
 			<a href="/#about" class="text-sm text-text-muted hover:text-accent transition-colors">About</a>
 			<a href="/blog" class="text-sm text-text-muted hover:text-accent transition-colors">Blog</a>
-			<a href="/start" class="text-sm px-4 py-2 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors">
-				Start a project
-			</a>
+			<SignedIn>
+				<a href="/start" class="text-sm px-4 py-2 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors">
+					Start a project
+				</a>
+				<UserButton afterSignOutUrl="/" />
+			</SignedIn>
+			<SignedOut>
+				<a href="/sign-in" class="text-sm text-text-muted hover:text-accent transition-colors">Sign in</a>
+				<a href="/sign-up" class="text-sm px-4 py-2 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors">
+					Start a project
+				</a>
+			</SignedOut>
 		</div>
 	</div>
 </nav>

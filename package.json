@@ -24,6 +24,8 @@
 		"vite": "^7.3.1"
 	},
 	"dependencies": {
-		"@anthropic-ai/sdk": "^0.78.0"
+		"@anthropic-ai/sdk": "^0.78.0",
+		"@clerk/backend": "^3.0.1",
+		"clerk-sveltekit": "^0.4.2"
 	}
 }

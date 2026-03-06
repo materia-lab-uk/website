@@ -1,15 +1,15 @@
-import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import { json, error } from '@sveltejs/kit';
+import type { RequestHandler } from './$types';
 
-export const load: PageServerLoad = async ({ params, platform, locals }) => {
-	const kv = platform?.env?.SUBMISSIONS;
-	if (!kv) {
-		throw error(503, 'Service unavailable');
-	}
-
+export const GET: RequestHandler = async ({ params, platform, locals }) => {
 	const userId = locals.session?.userId;
 	if (!userId) {
 		throw error(401, 'You must be signed in');
+	}
+
+	const kv = platform?.env?.SUBMISSIONS;
+	if (!kv) {
+		throw error(503, 'Service unavailable');
 	}
 
 	const data = await kv.get(`submission:${params.id}`);
@@ -19,11 +19,14 @@ export const load: PageServerLoad = async ({ params, platform, locals }) => {
 
 	const submission = JSON.parse(data);
 
-	// Only project owner or admin can view
 	const isAdmin = locals.session?.claims?.metadata?.role === 'admin';
 	if (submission.userId !== userId && !isAdmin) {
 		throw error(403, 'Access denied');
 	}
 
-	return { submission, isAdmin: !!isAdmin };
+	return json({
+		status: submission.status,
+		messages: submission.messages || [],
+		assessment: submission.assessment,
+	});
 };

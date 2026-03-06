@@ -15,8 +15,24 @@ Given a project enquiry, write a concise, professional project assessment. Be sp
 
 Be honest. If something sounds unrealistic, say so. If more info is needed, say what's missing.`;
 
+export interface Message {
+	id: string;
+	userId: string;
+	userName: string;
+	content: string;
+	createdAt: string;
+}
+
+export interface UploadedFile {
+	name: string;
+	key: string;
+	size: number;
+	type: string;
+}
+
 export interface Submission {
 	id: string;
+	userId: string;
 	name: string;
 	email: string;
 	company?: string;
@@ -25,14 +41,21 @@ export interface Submission {
 	description: string;
 	stage?: string;
 	referral?: string;
+	ndaAgreed: boolean;
+	files: UploadedFile[];
 	createdAt: string;
 	status: 'queued' | 'processing' | 'ready';
 	assessment: Record<string, unknown> | null;
+	messages: Message[];
 }
 
 export async function generateAssessment(submission: Submission, apiKey: string): Promise<Record<string, unknown> | null> {
 	try {
 		const client = new Anthropic({ apiKey });
+		const fileInfo = submission.files?.length
+			? `\n\nAttached files:\n${submission.files.map((f) => `- ${f.name} (${f.type}, ${Math.round(f.size / 1024)}KB)`).join('\n')}`
+			: '';
+
 		const userMessage = `New project enquiry:
 Name: ${submission.name}
 Email: ${submission.email}
@@ -42,7 +65,7 @@ Budget range: ${submission.budget || 'Not specified'}
 Desired timeline: ${submission.timeline || 'Not specified'}
 
 Project description:
-${submission.description}`;
+${submission.description}${fileInfo}`;
 
 		const response = await client.messages.create({
 			model: 'claude-haiku-4-5-20251001',

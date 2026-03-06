@@ -2,6 +2,9 @@
   let step = $state(1);
   let submitting = $state(false);
   let submitted = $state(false);
+  let files = $state<FileList | null>(null);
+  let ndaAgreed = $state(false);
+  let errorMsg = $state('');
 
   let form = $state({
     name: '',
@@ -38,8 +41,10 @@
     'Other',
   ];
 
+  const totalSteps = 4;
+
   function nextStep() {
-    step = Math.min(step + 1, 3);
+    step = Math.min(step + 1, totalSteps);
   }
 
   function prevStep() {
@@ -47,13 +52,28 @@
   }
 
   async function handleSubmit() {
+    if (!ndaAgreed) {
+      errorMsg = 'You must agree to the mutual NDA to proceed.';
+      return;
+    }
+    errorMsg = '';
     submitting = true;
     try {
+      const formData = new FormData();
+      Object.entries(form).forEach(([key, val]) => formData.append(key, val));
+      formData.append('ndaAgreed', String(ndaAgreed));
+
+      if (files) {
+        for (const file of files) {
+          formData.append('files', file);
+        }
+      }
+
       const res = await fetch('/api/intake', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
+        body: formData,
       });
+
       if (res.ok) {
         const result = await res.json();
         if (result.id) {
@@ -61,9 +81,11 @@
           return;
         }
         submitted = true;
+      } else {
+        const err = await res.json();
+        errorMsg = err.error || 'Something went wrong. Please try again.';
       }
     } catch (e) {
-      // fallback: mailto
       const subject = encodeURIComponent(`Project enquiry from ${form.name}`);
       const body = encodeURIComponent(
         `Name: ${form.name}\nEmail: ${form.email}\nCompany: ${form.company}\nBudget: ${form.budget}\nTimeline: ${form.timeline}\nStage: ${form.stage}\n\n${form.description}`
@@ -100,10 +122,16 @@
 
       <!-- Progress -->
       <div class="flex gap-2 mb-10">
-        {#each [1, 2, 3] as s}
-          <div class="h-1 flex-1 rounded-full transition-colors {s <= step ? 'bg-accent' : 'bg-surface-border'}"></div>
+        {#each Array(totalSteps) as _, i}
+          <div class="h-1 flex-1 rounded-full transition-colors {i + 1 <= step ? 'bg-accent' : 'bg-surface-border'}"></div>
         {/each}
       </div>
+
+      {#if errorMsg}
+        <div class="bg-red-900/20 border border-red-500/30 rounded-lg px-4 py-3 mb-6 text-red-300 text-sm">
+          {errorMsg}
+        </div>
+      {/if}
 
       <form onsubmit={(e: Event) => { e.preventDefault(); handleSubmit(); }}>
 
@@ -176,6 +204,28 @@
                 {/each}
               </div>
             </div>
+            <!-- File uploads -->
+            <div>
+              <label for="files" class="block text-sm font-medium mb-2">
+                Supporting materials <span class="text-text-muted font-normal">(optional)</span>
+              </label>
+              <p class="text-xs text-text-muted mb-3">Drawings, specs, images, datasheets — anything that helps us understand your project. Max 10MB per file.</p>
+              <input
+                id="files"
+                type="file"
+                multiple
+                bind:files={files}
+                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.svg,.step,.stp,.stl,.dxf,.dwg,.zip"
+                class="w-full bg-surface-alt border border-surface-border rounded-lg px-4 py-3 text-text file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-accent/10 file:text-accent file:text-sm file:font-medium file:cursor-pointer focus:outline-none focus:border-accent transition-colors"
+              />
+              {#if files && files.length > 0}
+                <div class="mt-3 space-y-1">
+                  {#each Array.from(files) as file}
+                    <p class="text-xs text-text-muted font-mono">{file.name} ({Math.round(file.size / 1024)}KB)</p>
+                  {/each}
+                </div>
+              {/if}
+            </div>
           </div>
 
         {:else if step === 3}
@@ -228,6 +278,33 @@
               />
             </div>
           </div>
+
+        {:else if step === 4}
+          <!-- Step 4: NDA & submit -->
+          <div class="space-y-6">
+            <div class="border border-surface-border rounded-lg p-6">
+              <h3 class="text-lg font-medium mb-4">Mutual Non-Disclosure Agreement</h3>
+              <div class="text-sm text-text-muted leading-relaxed space-y-3 max-h-64 overflow-y-auto pr-2">
+                <p>By submitting this project enquiry, both parties agree to the following terms:</p>
+                <p><strong class="text-text">1. Confidential Information.</strong> All information shared through this platform — including project descriptions, technical specifications, drawings, business plans, and any uploaded materials — shall be treated as confidential by both parties.</p>
+                <p><strong class="text-text">2. Obligations.</strong> Materia Lab (MartinWrightConsulting Ltd) agrees not to disclose, share, or use your confidential information for any purpose other than evaluating and responding to your project enquiry, unless explicitly authorised by you in writing.</p>
+                <p><strong class="text-text">3. Reciprocal.</strong> You agree not to disclose any assessments, recommendations, or proprietary methodologies shared by Materia Lab through this platform without prior written consent.</p>
+                <p><strong class="text-text">4. Exclusions.</strong> This agreement does not apply to information that: (a) is or becomes publicly available through no fault of the receiving party; (b) was known to the receiving party prior to disclosure; (c) is independently developed without use of confidential information; or (d) is required to be disclosed by law.</p>
+                <p><strong class="text-text">5. Duration.</strong> These obligations shall remain in effect for 2 years from the date of submission.</p>
+                <p><strong class="text-text">6. Governing Law.</strong> This agreement is governed by the laws of England and Wales.</p>
+              </div>
+            </div>
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                bind:checked={ndaAgreed}
+                class="mt-1 w-4 h-4 rounded border-surface-border bg-surface-alt accent-accent"
+              />
+              <span class="text-sm text-text-muted leading-relaxed">
+                I have read and agree to the mutual non-disclosure agreement. I understand that all information shared is treated as confidential by both parties.
+              </span>
+            </label>
+          </div>
         {/if}
 
         <!-- Navigation buttons -->
@@ -241,15 +318,15 @@
             <div></div>
           {/if}
 
-          {#if step < 3}
+          {#if step < totalSteps}
             <button type="button" onclick={nextStep}
               class="px-6 py-3 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors">
               Next
             </button>
           {:else}
-            <button type="submit" disabled={submitting}
+            <button type="submit" disabled={submitting || !ndaAgreed}
               class="px-8 py-3 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors disabled:opacity-50">
-              {submitting ? 'Sending...' : 'Submit'}
+              {submitting ? 'Submitting...' : 'Submit project'}
             </button>
           {/if}
         </div>

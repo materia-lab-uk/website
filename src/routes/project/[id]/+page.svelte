@@ -1,8 +1,53 @@
 <script lang="ts">
+  import SignedIn from 'clerk-sveltekit/client/SignedIn.svelte';
+
   let { data } = $props();
-  const { submission } = data;
+  const { submission, isAdmin } = data;
   const a = submission.assessment;
   const isPending = submission.status === 'queued' || submission.status === 'processing';
+
+  let messages = $state(submission.messages || []);
+  let newMessage = $state('');
+  let sending = $state(false);
+
+  async function sendMessage(user: { fullName?: string; firstName?: string }) {
+    if (!newMessage.trim() || sending) return;
+    sending = true;
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId: submission.id,
+          content: newMessage.trim(),
+          userName: user.fullName || user.firstName || 'User',
+        }),
+      });
+      if (res.ok) {
+        const result = await res.json();
+        messages = [...messages, result.message];
+        newMessage = '';
+      }
+    } finally {
+      sending = false;
+    }
+  }
+
+  // Poll for new messages every 15 seconds
+  $effect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/project/${submission.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.messages?.length > messages.length) {
+            messages = data.messages;
+          }
+        }
+      } catch {}
+    }, 15000);
+    return () => clearInterval(interval);
+  });
 </script>
 
 <svelte:head>
@@ -17,7 +62,6 @@
     <p class="font-mono text-xs tracking-[0.3em] text-accent mb-6 uppercase">Project Assessment</p>
 
     {#if isPending}
-      <!-- Queued / Processing state -->
       <h1 class="text-3xl md:text-4xl font-light tracking-tight mb-6">Thanks, {submission.name}.</h1>
       <div class="border border-accent/20 bg-accent-glow rounded-lg p-6 mb-8">
         <div class="flex items-center gap-3 mb-3">
@@ -36,7 +80,6 @@
       </div>
 
     {:else if !a}
-      <!-- Completed but no assessment (API error fallback) -->
       <h1 class="text-3xl md:text-4xl font-light tracking-tight mb-6">Thanks, {submission.name}.</h1>
       <p class="text-lg text-text-muted leading-relaxed mb-8">
         We've received your enquiry and will get back to you within 24 hours with a detailed assessment and next steps.
@@ -47,7 +90,6 @@
       </div>
 
     {:else}
-      <!-- Assessment ready -->
       <h1 class="text-3xl md:text-4xl font-light tracking-tight mb-2">
         {submission.company ? `${submission.company} —` : ''} Project Assessment
       </h1>
@@ -55,19 +97,16 @@
         Prepared for {submission.name} &middot; {new Date(submission.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
       </p>
 
-      <!-- Summary -->
       <div class="mb-10">
         <h2 class="text-lg font-medium mb-3">Summary</h2>
         <p class="text-text-muted leading-relaxed">{a.summary}</p>
       </div>
 
-      <!-- Feasibility -->
       <div class="mb-10">
         <h2 class="text-lg font-medium mb-3">Feasibility</h2>
         <p class="text-text-muted leading-relaxed">{a.feasibility}</p>
       </div>
 
-      <!-- Recommended approach -->
       <div class="mb-10">
         <h2 class="text-lg font-medium mb-3">Recommended Approach</h2>
         <ul class="space-y-2">
@@ -80,7 +119,6 @@
         </ul>
       </div>
 
-      <!-- Service & estimates -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         <div class="border border-surface-border rounded-lg p-5">
           <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Recommended</p>
@@ -96,7 +134,6 @@
         </div>
       </div>
 
-      <!-- Key risks -->
       <div class="mb-10">
         <h2 class="text-lg font-medium mb-3">Key Risks & Unknowns</h2>
         <ul class="space-y-2">
@@ -109,7 +146,6 @@
         </ul>
       </div>
 
-      <!-- Next steps -->
       <div class="mb-10">
         <h2 class="text-lg font-medium mb-3">Next Steps</h2>
         <ol class="space-y-2">
@@ -121,14 +157,60 @@
           {/each}
         </ol>
       </div>
+    {/if}
 
-      <!-- CTA -->
-      <div class="border border-surface-border rounded-lg p-8 text-center">
-        <p class="text-lg font-light mb-4">Ready to move forward?</p>
-        <a href="mailto:nic@materia-lab.uk?subject=Re: Project Assessment" class="px-6 py-3 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors inline-block">
-          Get in touch
-        </a>
+    <!-- Uploaded files -->
+    {#if submission.files?.length > 0}
+      <div class="mb-10">
+        <h2 class="text-lg font-medium mb-3">Attached Files</h2>
+        <div class="space-y-2">
+          {#each submission.files as file}
+            <div class="flex items-center gap-3 text-sm text-text-muted border border-surface-border rounded-lg px-4 py-3">
+              <span class="font-mono text-accent">&#x1F4CE;</span>
+              <span>{file.name}</span>
+              <span class="text-xs">({Math.round(file.size / 1024)}KB)</span>
+            </div>
+          {/each}
+        </div>
       </div>
     {/if}
+
+    <!-- Chat -->
+    <div class="mt-16 border-t border-surface-border pt-10">
+      <h2 class="text-lg font-medium mb-6">Discussion</h2>
+
+      {#if messages.length === 0}
+        <p class="text-text-muted text-sm mb-6">No messages yet. Start the conversation below.</p>
+      {:else}
+        <div class="space-y-4 mb-6 max-h-96 overflow-y-auto">
+          {#each messages as msg}
+            <div class="border border-surface-border rounded-lg p-4">
+              <div class="flex justify-between items-baseline mb-2">
+                <span class="text-sm font-medium {msg.userName === 'Nicole' || msg.userName === 'Dr Nicole Martin' ? 'text-accent' : 'text-text'}">{msg.userName}</span>
+                <span class="font-mono text-xs text-text-muted">
+                  {new Date(msg.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} {new Date(msg.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+              <p class="text-text-muted leading-relaxed text-sm">{msg.content}</p>
+            </div>
+          {/each}
+        </div>
+      {/if}
+
+      <SignedIn let:user>
+        <form onsubmit={(e: Event) => { e.preventDefault(); sendMessage(user); }} class="flex gap-3">
+          <input
+            type="text"
+            bind:value={newMessage}
+            placeholder="Type a message..."
+            class="flex-1 bg-surface-alt border border-surface-border rounded-lg px-4 py-3 text-text placeholder:text-text-muted/50 focus:outline-none focus:border-accent transition-colors"
+          />
+          <button type="submit" disabled={sending || !newMessage.trim()}
+            class="px-6 py-3 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors disabled:opacity-50">
+            Send
+          </button>
+        </form>
+      </SignedIn>
+    </div>
   </div>
 </section>
