@@ -55,6 +55,11 @@
         body: JSON.stringify(form),
       });
       if (res.ok) {
+        const result = await res.json();
+        if (result.id) {
+          window.location.href = `/project/${result.id}`;
+          return;
+        }
         submitted = true;
       }
     } catch (e) {
