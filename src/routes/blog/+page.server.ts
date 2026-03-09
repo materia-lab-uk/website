@@ -11,9 +11,9 @@ interface DevToArticle {
 	cover_image: string | null;
 }
 
-export const load: PageServerLoad = async ({ fetch }) => {
+export const load: PageServerLoad = async () => {
 	try {
-		const res = await fetch('https://dev.to/api/articles?username=dr_nicole&per_page=20');
+		const res = await globalThis.fetch('https://dev.to/api/articles?username=dr_nicole&per_page=20');
 		if (!res.ok) return { articles: [] };
 		const articles: DevToArticle[] = await res.json();
 		return {
