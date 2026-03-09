@@ -11,10 +11,18 @@ interface DevToArticle {
 	cover_image: string | null;
 }
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		const res = await globalThis.fetch('https://dev.to/api/articles?username=dr_nicole&per_page=20');
-		if (!res.ok) return { articles: [] };
+		const res = await fetch('https://dev.to/api/articles?username=dr_nicole&per_page=20', {
+			headers: {
+				'Accept': 'application/json',
+				'User-Agent': 'materia-lab.uk',
+			},
+		});
+		if (!res.ok) {
+			console.error(`Dev.to API returned ${res.status}: ${res.statusText}`);
+			return { articles: [] };
+		}
 		const articles: DevToArticle[] = await res.json();
 		return {
 			articles: articles.map((a) => ({
@@ -28,7 +36,8 @@ export const load: PageServerLoad = async () => {
 				coverImage: a.cover_image,
 			})),
 		};
-	} catch {
+	} catch (e) {
+		console.error('Dev.to fetch error:', e);
 		return { articles: [] };
 	}
 };
