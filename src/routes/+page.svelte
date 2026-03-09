@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Logo from '$lib/components/Logo.svelte';
+
   const services = [
     {
       title: 'Feasibility Sprint',
@@ -37,7 +39,10 @@
 <!-- Hero -->
 <section class="min-h-[85vh] flex items-center px-6">
   <div class="max-w-4xl mx-auto">
-    <p class="font-mono text-xs tracking-[0.3em] text-accent mb-6 uppercase">Engineering & Technology Consultancy</p>
+    <div class="mb-10 hidden md:block">
+      <Logo height={80} />
+    </div>
+    <p class="font-mono text-xs tracking-[0.3em] text-accent mb-6 uppercase md:hidden">Engineering & Technology Consultancy</p>
     <h1 class="text-5xl md:text-7xl font-light tracking-tight leading-[1.1] mb-6">
       From first principles<br />to first product.
     </h1>
