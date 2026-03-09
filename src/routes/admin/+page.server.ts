@@ -1,6 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Submission } from '$lib/server/assess';
+import { isAdmin } from '$lib/server/admin';
 
 export const load: PageServerLoad = async ({ platform, locals }) => {
 	const userId = locals.session?.userId;
@@ -8,8 +9,7 @@ export const load: PageServerLoad = async ({ platform, locals }) => {
 		throw error(401, 'You must be signed in');
 	}
 
-	const isAdmin = locals.session?.claims?.metadata?.role === 'admin';
-	if (!isAdmin) {
+	if (!isAdmin(userId)) {
 		throw error(403, 'Admin access required');
 	}
 

@@ -1,6 +1,7 @@
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import type { Submission, Message } from '$lib/server/assess';
+import { isAdmin } from '$lib/server/admin';
 
 export const POST: RequestHandler = async ({ request, platform, locals }) => {
 	const userId = locals.session?.userId;
@@ -27,8 +28,7 @@ export const POST: RequestHandler = async ({ request, platform, locals }) => {
 	const submission: Submission = JSON.parse(data);
 
 	// Only the project owner or admin can chat
-	const isAdmin = locals.session?.claims?.metadata?.role === 'admin';
-	if (submission.userId !== userId && !isAdmin) {
+	if (submission.userId !== userId && !isAdmin(userId)) {
 		throw error(403, 'Access denied');
 	}
 

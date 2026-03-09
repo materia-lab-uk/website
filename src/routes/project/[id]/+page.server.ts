@@ -1,5 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { isAdmin } from '$lib/server/admin';
 
 export const load: PageServerLoad = async ({ params, platform, locals }) => {
 	const kv = platform?.env?.SUBMISSIONS;
@@ -20,10 +21,10 @@ export const load: PageServerLoad = async ({ params, platform, locals }) => {
 	const submission = JSON.parse(data);
 
 	// Only project owner or admin can view
-	const isAdmin = locals.session?.claims?.metadata?.role === 'admin';
-	if (submission.userId !== userId && !isAdmin) {
+	const admin = isAdmin(userId);
+	if (submission.userId !== userId && !admin) {
 		throw error(403, 'Access denied');
 	}
 
-	return { submission, isAdmin: !!isAdmin };
+	return { submission, isAdmin: admin };
 };

@@ -1,5 +1,6 @@
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { isAdmin } from '$lib/server/admin';
 
 export const GET: RequestHandler = async ({ params, platform, locals }) => {
 	const userId = locals.session?.userId;
@@ -19,8 +20,7 @@ export const GET: RequestHandler = async ({ params, platform, locals }) => {
 
 	const submission = JSON.parse(data);
 
-	const isAdmin = locals.session?.claims?.metadata?.role === 'admin';
-	if (submission.userId !== userId && !isAdmin) {
+	if (submission.userId !== userId && !isAdmin(userId)) {
 		throw error(403, 'Access denied');
 	}
 
