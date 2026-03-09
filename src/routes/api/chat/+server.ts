@@ -40,6 +40,7 @@ export const POST: RequestHandler = async ({ request, platform, locals }) => {
 		createdAt: new Date().toISOString(),
 	};
 
+	if (!submission.messages) submission.messages = [];
 	submission.messages.push(message);
 	await kv.put(`submission:${projectId}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
 
