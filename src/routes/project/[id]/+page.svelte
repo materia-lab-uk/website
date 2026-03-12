@@ -188,6 +188,10 @@
             </li>
           {/each}
         </ol>
+        <a href="https://cloud.materia-lab.uk/index.php/apps/appointments/pub/r4qzDD1NYtq7yv4l/form" target="_blank" rel="noopener"
+          class="inline-block mt-6 px-6 py-3 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors">
+          Book a discovery call
+        </a>
       </div>
     {/if}
 

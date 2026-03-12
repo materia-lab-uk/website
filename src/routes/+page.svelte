@@ -122,8 +122,13 @@
   <div class="max-w-4xl mx-auto text-center">
     <h2 class="text-3xl md:text-4xl font-light mb-4">Got a hard problem?</h2>
     <p class="text-text-muted text-lg mb-8">Tell us about your project and get a tailored response in minutes.</p>
-    <a href="/start" class="px-8 py-4 bg-accent text-surface font-medium rounded text-lg hover:bg-accent-dim transition-colors">
-      Start a project
-    </a>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="/start" class="px-8 py-4 bg-accent text-surface font-medium rounded text-lg hover:bg-accent-dim transition-colors">
+        Start a project
+      </a>
+      <a href="https://cloud.materia-lab.uk/index.php/apps/appointments/pub/r4qzDD1NYtq7yv4l/form" target="_blank" rel="noopener" class="px-8 py-4 border border-surface-border text-text-muted font-medium rounded text-lg hover:border-accent hover:text-accent transition-colors">
+        Book a call
+      </a>
+    </div>
   </div>
 </section>
