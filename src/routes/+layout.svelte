@@ -7,6 +7,7 @@
 	import UserButton from 'clerk-sveltekit/client/UserButton.svelte';
 
 	let { children } = $props();
+	let menuOpen = $state(false);
 </script>
 
 <svelte:head>
@@ -37,7 +38,9 @@
 		<a href="/">
 			<Logo height={48} />
 		</a>
-		<div class="flex items-center gap-6">
+
+		<!-- Desktop nav -->
+		<div class="hidden md:flex items-center gap-6">
 			<a href="/#services" class="text-sm text-text-muted hover:text-accent transition-colors">Services</a>
 			<a href="/#about" class="text-sm text-text-muted hover:text-accent transition-colors">About</a>
 			<a href="/blog" class="text-sm text-text-muted hover:text-accent transition-colors">Blog</a>
@@ -55,7 +58,40 @@
 				</a>
 			</SignedOut>
 		</div>
+
+		<!-- Mobile hamburger -->
+		<button
+			type="button"
+			class="md:hidden flex flex-col gap-1.5 p-2"
+			onclick={() => { menuOpen = !menuOpen; }}
+			aria-label="Toggle menu"
+		>
+			<span class="block w-6 h-0.5 bg-text-muted transition-all {menuOpen ? 'rotate-45 translate-y-2' : ''}"></span>
+			<span class="block w-6 h-0.5 bg-text-muted transition-all {menuOpen ? 'opacity-0' : ''}"></span>
+			<span class="block w-6 h-0.5 bg-text-muted transition-all {menuOpen ? '-rotate-45 -translate-y-2' : ''}"></span>
+		</button>
 	</div>
+
+	<!-- Mobile menu -->
+	{#if menuOpen}
+		<div class="md:hidden border-t border-surface-border bg-surface/95 backdrop-blur-md px-6 py-6 flex flex-col gap-4">
+			<a href="/#services" onclick={() => { menuOpen = false; }} class="text-sm text-text-muted hover:text-accent transition-colors">Services</a>
+			<a href="/#about" onclick={() => { menuOpen = false; }} class="text-sm text-text-muted hover:text-accent transition-colors">About</a>
+			<a href="/blog" onclick={() => { menuOpen = false; }} class="text-sm text-text-muted hover:text-accent transition-colors">Blog</a>
+			<SignedIn>
+				<a href="/projects" onclick={() => { menuOpen = false; }} class="text-sm text-text-muted hover:text-accent transition-colors">My Projects</a>
+				<a href="/start" onclick={() => { menuOpen = false; }} class="text-sm px-4 py-2 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors text-center">
+					Start a project
+				</a>
+			</SignedIn>
+			<SignedOut>
+				<a href="/sign-in" onclick={() => { menuOpen = false; }} class="text-sm text-text-muted hover:text-accent transition-colors">Sign in</a>
+				<a href="/sign-up" onclick={() => { menuOpen = false; }} class="text-sm px-4 py-2 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors text-center">
+					Start a project
+				</a>
+			</SignedOut>
+		</div>
+	{/if}
 </nav>
 
 <!-- Main content with top padding for fixed nav -->
