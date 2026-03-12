@@ -42,6 +42,7 @@
 			<a href="/#about" class="text-sm text-text-muted hover:text-accent transition-colors">About</a>
 			<a href="/blog" class="text-sm text-text-muted hover:text-accent transition-colors">Blog</a>
 			<SignedIn>
+				<a href="/projects" class="text-sm text-text-muted hover:text-accent transition-colors">My Projects</a>
 				<a href="/start" class="text-sm px-4 py-2 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors">
 					Start a project
 				</a>
