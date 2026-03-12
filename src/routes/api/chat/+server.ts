@@ -81,9 +81,11 @@ export const POST: RequestHandler = async ({ request, platform, locals }) => {
 	submission.messages.push(message);
 	await kv.put(`submission:${projectId}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
 
-	// Generate AI follow-up (non-admin messages only)
+	// Generate AI follow-up (non-admin messages only, max 10 AI replies per project)
+	const MAX_AI_MESSAGES = 10;
+	const aiMessageCount = submission.messages.filter((m: Message) => m.userId === 'ai').length;
 	let aiMessage: Message | null = null;
-	if (apiKey && !isAdmin(userId)) {
+	if (apiKey && !isAdmin(userId) && aiMessageCount < MAX_AI_MESSAGES) {
 		try {
 			const client = new Anthropic({ apiKey });
 			const chatMessages = buildChatMessages(submission);
