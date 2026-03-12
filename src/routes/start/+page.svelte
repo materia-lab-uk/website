@@ -15,6 +15,7 @@
     description: '',
     stage: '',
     referral: '',
+    githubRepo: '',
   });
 
   const budgets = [
@@ -225,6 +226,18 @@
                   {/each}
                 </div>
               {/if}
+            </div>
+            <div>
+              <label for="githubRepo" class="block text-sm font-medium mb-2">
+                GitHub repository <span class="text-text-muted font-normal">(optional)</span>
+              </label>
+              <input
+                id="githubRepo"
+                type="url"
+                bind:value={form.githubRepo}
+                class="w-full bg-surface-alt border border-surface-border rounded-lg px-4 py-3 text-text placeholder:text-text-muted/50 focus:outline-none focus:border-accent transition-colors"
+                placeholder="https://github.com/org/repo"
+              />
             </div>
           </div>
 

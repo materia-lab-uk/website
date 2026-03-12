@@ -44,6 +44,7 @@ export interface Submission {
 	description: string;
 	stage?: string;
 	referral?: string;
+	githubRepo?: string;
 	ndaAgreed: boolean;
 	files: UploadedFile[];
 	createdAt: string;

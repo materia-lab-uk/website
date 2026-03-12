@@ -27,6 +27,7 @@ export const POST: RequestHandler = async ({ request, platform, locals }) => {
 	const description = formData.get('description') as string;
 	const stage = formData.get('stage') as string;
 	const referral = formData.get('referral') as string;
+	const githubRepo = formData.get('githubRepo') as string;
 	const ndaAgreed = formData.get('ndaAgreed') === 'true';
 
 	if (!name || !email || !description) {
@@ -68,6 +69,7 @@ export const POST: RequestHandler = async ({ request, platform, locals }) => {
 		description,
 		stage,
 		referral,
+		githubRepo: githubRepo?.trim() || undefined,
 		ndaAgreed,
 		files: uploadedFiles,
 		createdAt: new Date().toISOString(),
