@@ -7,29 +7,47 @@
   const isPending = submission.status === 'queued' || submission.status === 'processing';
 
   let messages = $state(submission.messages || []);
+  let allFiles = $state(submission.files || []);
   let newMessage = $state('');
   let sending = $state(false);
+  let chatFile: File | null = $state(null);
 
   async function sendMessage(user: { fullName?: string; firstName?: string }) {
-    if (!newMessage.trim() || sending) return;
+    if ((!newMessage.trim() && !chatFile) || sending) return;
     sending = true;
     try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          projectId: submission.id,
-          content: newMessage.trim(),
-          userName: user.fullName || user.firstName || 'User',
-        }),
-      });
-      if (res.ok) {
-        const result = await res.json();
-        messages = [...messages, result.message];
-        if (result.aiMessage) {
-          messages = [...messages, result.aiMessage];
+      // Upload file first if attached
+      if (chatFile) {
+        const formData = new FormData();
+        formData.append('projectId', submission.id);
+        formData.append('file', chatFile);
+        const uploadRes = await fetch('/api/chat/upload', { method: 'POST', body: formData });
+        if (uploadRes.ok) {
+          const result = await uploadRes.json();
+          allFiles = [...allFiles, result.file];
         }
-        newMessage = '';
+        chatFile = null;
+      }
+
+      // Send message if there's text
+      if (newMessage.trim()) {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            projectId: submission.id,
+            content: newMessage.trim(),
+            userName: user.fullName || user.firstName || 'User',
+          }),
+        });
+        if (res.ok) {
+          const result = await res.json();
+          messages = [...messages, result.message];
+          if (result.aiMessage) {
+            messages = [...messages, result.aiMessage];
+          }
+          newMessage = '';
+        }
       }
     } finally {
       sending = false;
@@ -162,16 +180,19 @@
       </div>
     {/if}
 
-    <!-- Uploaded files -->
-    {#if submission.files?.length > 0}
+    <!-- All project files -->
+    {#if allFiles.length > 0}
       <div class="mb-10">
-        <h2 class="text-lg font-medium mb-3">Attached Files</h2>
+        <h2 class="text-lg font-medium mb-3">Files</h2>
         <div class="space-y-2">
-          {#each submission.files as file}
+          {#each allFiles as file}
             <div class="flex items-center gap-3 text-sm text-text-muted border border-surface-border rounded-lg px-4 py-3">
               <span class="font-mono text-accent">&#x1F4CE;</span>
               <span>{file.name}</span>
               <span class="text-xs">({Math.round(file.size / 1024)}KB)</span>
+              {#if file.source === 'chat'}
+                <span class="text-xs font-mono text-accent/50">chat</span>
+              {/if}
             </div>
           {/each}
         </div>
@@ -201,6 +222,13 @@
       {/if}
 
       <SignedIn let:user>
+        {#if chatFile}
+          <div class="flex items-center gap-2 mb-3 text-sm text-text-muted">
+            <span class="font-mono text-accent">&#x1F4CE;</span>
+            <span>{chatFile.name}</span>
+            <button type="button" onclick={() => { chatFile = null; }} class="text-xs text-accent hover:text-accent-dim">&times; remove</button>
+          </div>
+        {/if}
         <form onsubmit={(e: Event) => { e.preventDefault(); sendMessage(user); }} class="flex gap-3">
           <input
             type="text"
@@ -208,7 +236,11 @@
             placeholder="Type a message..."
             class="flex-1 bg-surface-alt border border-surface-border rounded-lg px-4 py-3 text-text placeholder:text-text-muted/50 focus:outline-none focus:border-accent transition-colors"
           />
-          <button type="submit" disabled={sending || !newMessage.trim()}
+          <label class="flex items-center px-3 border border-surface-border rounded-lg cursor-pointer hover:border-accent/30 transition-colors">
+            <span class="text-text-muted text-lg">&#x1F4CE;</span>
+            <input type="file" class="hidden" onchange={(e: Event) => { const t = e.target as HTMLInputElement; chatFile = t.files?.[0] || null; }} />
+          </label>
+          <button type="submit" disabled={sending || (!newMessage.trim() && !chatFile)}
             class="px-6 py-3 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors disabled:opacity-50">
             Send
           </button>
