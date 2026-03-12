@@ -26,6 +26,9 @@
       if (res.ok) {
         const result = await res.json();
         messages = [...messages, result.message];
+        if (result.aiMessage) {
+          messages = [...messages, result.aiMessage];
+        }
         newMessage = '';
       }
     } finally {
@@ -184,9 +187,9 @@
       {:else}
         <div class="space-y-4 mb-6 max-h-96 overflow-y-auto">
           {#each messages as msg}
-            <div class="border border-surface-border rounded-lg p-4">
+            <div class="border {msg.userId === 'ai' ? 'border-accent/20 bg-accent-glow' : 'border-surface-border'} rounded-lg p-4">
               <div class="flex justify-between items-baseline mb-2">
-                <span class="text-sm font-medium {msg.userName === 'Nicole' || msg.userName === 'Dr Nicole Martin' ? 'text-accent' : 'text-text'}">{msg.userName}</span>
+                <span class="text-sm font-medium {msg.userName === 'Nicole' || msg.userName === 'Dr Nicole Martin' || msg.userId === 'ai' ? 'text-accent' : 'text-text'}">{msg.userName}</span>
                 <span class="font-mono text-xs text-text-muted">
                   {new Date(msg.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} {new Date(msg.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
                 </span>
