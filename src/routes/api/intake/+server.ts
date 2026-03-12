@@ -2,6 +2,7 @@ import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { canGenerate, generateAssessment, markGenerated, addToQueue } from '$lib/server/assess';
 import type { Submission } from '$lib/server/assess';
+import { sendEmail, newSubmissionEmail, assessmentReadyEmail } from '$lib/server/email';
 
 function generateId() {
 	return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
@@ -18,6 +19,7 @@ export const POST: RequestHandler = async ({ request, platform, locals, getClien
 	const kv = platform?.env?.SUBMISSIONS;
 	const r2 = platform?.env?.UPLOADS;
 	const apiKey = platform?.env?.ANTHROPIC_API_KEY;
+	const relayToken = platform?.env?.EMAIL_RELAY_TOKEN;
 	const clientIp = getClientAddress();
 
 	const formData = await request.formData();
@@ -109,6 +111,14 @@ export const POST: RequestHandler = async ({ request, platform, locals, getClien
 	}
 
 	console.log(`--- New project enquiry [${id}] user:${userId} status:${submission.status} files:${uploadedFiles.length} ---`);
+
+	// Send email notifications (fire-and-forget)
+	if (relayToken) {
+		sendEmail(newSubmissionEmail(name, id, description), relayToken).catch(() => {});
+		if (submission.status === 'ready' && submission.title) {
+			sendEmail(assessmentReadyEmail(name, email, id, submission.title), relayToken).catch(() => {});
+		}
+	}
 
 	return json({ success: true, id, status: submission.status });
 };

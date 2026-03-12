@@ -16,6 +16,7 @@ declare global {
 				UPLOADS: R2Bucket;
 				ANTHROPIC_API_KEY: string;
 				CRON_SECRET: string;
+				EMAIL_RELAY_TOKEN: string;
 			};
 		}
 	}
