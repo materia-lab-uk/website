@@ -46,7 +46,9 @@ class RelayHandler(BaseHTTPRequestHandler):
             if html:
                 msg.attach(MIMEText(html, "html"))
 
-            with smtplib.SMTP("localhost", 25) as s:
+            with smtplib.SMTP("localhost", 587) as s:
+                s.starttls()
+                s.login("noreply", "MateriaNoReply2026")
                 s.send_message(msg)
 
             self.send_response(200)
