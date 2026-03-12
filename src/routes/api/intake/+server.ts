@@ -1,16 +1,14 @@
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { canGenerate, generateAssessment, markGenerated, addToQueue } from '$lib/server/assess';
+import { addToQueue } from '$lib/server/assess';
 import type { Submission } from '$lib/server/assess';
-import { sendEmail, newSubmissionEmail, assessmentReadyEmail } from '$lib/server/email';
+import { sendEmail, newSubmissionEmail } from '$lib/server/email';
 
 function generateId() {
 	return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
-const OWNER_IP = '86.31.243.178';
-
-export const POST: RequestHandler = async ({ request, platform, locals, getClientAddress }) => {
+export const POST: RequestHandler = async ({ request, platform, locals }) => {
 	const userId = locals.session?.userId;
 	if (!userId) {
 		throw error(401, 'You must be signed in to submit a project');
@@ -18,9 +16,7 @@ export const POST: RequestHandler = async ({ request, platform, locals, getClien
 
 	const kv = platform?.env?.SUBMISSIONS;
 	const r2 = platform?.env?.UPLOADS;
-	const apiKey = platform?.env?.ANTHROPIC_API_KEY;
 	const relayToken = platform?.env?.EMAIL_RELAY_TOKEN;
-	const clientIp = getClientAddress();
 
 	const formData = await request.formData();
 	const name = formData.get('name') as string;
@@ -81,44 +77,37 @@ export const POST: RequestHandler = async ({ request, platform, locals, getClien
 		messages: [],
 	};
 
-	// Try immediate generation if rate limit allows
-	if (kv && apiKey && await canGenerate(kv, clientIp, OWNER_IP)) {
-		submission.status = 'processing';
-		await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
+	// Add initial AI welcome message
+	const welcomeMessage: import('$lib/server/assess').Message = {
+		id: Math.random().toString(36).slice(2, 10) + Date.now().toString(36),
+		userId: 'ai',
+		userName: 'Materia Lab AI',
+		content: `Hi ${name.split(' ')[0]}! Thanks for submitting your project. While we prepare your detailed assessment, I'd love to understand your priorities a bit better — what's the most important outcome for you: speed to market, technical quality, cost efficiency, or something else?`,
+		createdAt: new Date().toISOString(),
+	};
+	submission.messages = [welcomeMessage];
 
-		const assessment = await generateAssessment(submission, apiKey);
-		submission.assessment = assessment;
-		submission.title = (assessment?.title as string) || null;
-		submission.status = assessment ? 'ready' : 'queued';
-
-		await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
-
-		if (assessment) {
-			await markGenerated(kv);
-		} else {
-			await addToQueue(kv, id);
-		}
-	} else if (kv) {
+	// Save immediately and queue for async assessment generation
+	if (kv) {
 		await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
 		await addToQueue(kv, id);
-	}
 
-	// Track user's projects
-	if (kv) {
+		// Track user's projects
 		const userProjects = JSON.parse((await kv.get(`user:${userId}:projects`)) || '[]') as string[];
 		userProjects.push(id);
 		await kv.put(`user:${userId}:projects`, JSON.stringify(userProjects));
 	}
 
-	console.log(`--- New project enquiry [${id}] user:${userId} status:${submission.status} files:${uploadedFiles.length} ---`);
+	console.log(`--- New project enquiry [${id}] user:${userId} files:${uploadedFiles.length} relayToken:${relayToken ? 'set' : 'MISSING'} ---`);
 
-	// Send email notifications (fire-and-forget)
+	// Send email notification
 	if (relayToken) {
-		sendEmail(newSubmissionEmail(name, id, description), relayToken).catch(() => {});
-		if (submission.status === 'ready' && submission.title) {
-			sendEmail(assessmentReadyEmail(name, email, id, submission.title), relayToken).catch(() => {});
-		}
+		sendEmail(newSubmissionEmail(name, id, description), relayToken)
+			.then((ok) => console.log(`Email notification sent: ${ok}`))
+			.catch((e) => console.error('Email notification failed:', e));
+	} else {
+		console.warn('EMAIL_RELAY_TOKEN not set — skipping email notification');
 	}
 
-	return json({ success: true, id, status: submission.status });
+	return json({ success: true, id, status: 'queued' });
 };

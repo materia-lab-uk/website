@@ -14,6 +14,7 @@
   let githubRepo = $state(submission.githubRepo || '');
   let editingRepo = $state(false);
   let chatContainer: HTMLDivElement | undefined = $state();
+  let chatOpen = $state(false);
 
   async function saveGithubRepo() {
     await fetch(`/api/project/${submission.id}`, {
@@ -138,7 +139,7 @@
             {submission.title || (submission.company ? `${submission.company} — Project Assessment` : 'Project Assessment')}
           </h1>
           <p class="text-sm text-text-muted mb-10">
-            Prepared for {submission.name} &middot; {new Date(submission.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
+            Prepared for {submission.name} by Materia Lab AI &middot; {new Date(submission.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
 
           <div class="mb-10">
@@ -253,10 +254,17 @@
         {/if}
       </div>
 
-      <!-- Right: Chat (sticky on desktop) -->
+      <!-- Right: Chat (sticky on desktop, collapsible on mobile) -->
       <div class="lg:w-96 lg:shrink-0">
-        <div class="lg:sticky lg:top-24 border border-surface-border rounded-lg p-6 flex flex-col" style="max-height: calc(100vh - 8rem);">
-          <h2 class="text-lg font-medium mb-4">Discussion</h2>
+        <!-- Mobile toggle button -->
+        <button type="button" onclick={() => { chatOpen = !chatOpen; }}
+          class="lg:hidden w-full flex items-center justify-between border border-surface-border rounded-lg px-4 py-3 mb-2">
+          <span class="text-lg font-medium">Discussion</span>
+          <span class="text-text-muted text-sm">{messages.length} message{messages.length !== 1 ? 's' : ''} {chatOpen ? '▲' : '▼'}</span>
+        </button>
+
+        <div class="{chatOpen ? '' : 'hidden'} lg:block lg:sticky lg:top-24 border border-surface-border rounded-lg p-6 flex flex-col" style="max-height: calc(100vh - 8rem);">
+          <h2 class="text-lg font-medium mb-4 hidden lg:block">Discussion</h2>
 
           {#if messages.length === 0}
             <p class="text-text-muted text-sm mb-4 flex-1">No messages yet. Start the conversation below.</p>
