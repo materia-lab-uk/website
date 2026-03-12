@@ -4,3 +4,7 @@ compatibility_flags = ["nodejs_compat"]
 [[kv_namespaces]]
 binding = "SUBMISSIONS"
 id = "f5e3d35d300a4af7b4bdf24396b4b0c3"
+
+[[r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "materia-lab-uploads"
