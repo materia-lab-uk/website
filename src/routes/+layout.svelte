@@ -12,6 +12,23 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 	<title>Materia Lab — Engineering & Technology Consultancy</title>
+	<meta name="description" content="Product development and engineering consultancy. Robotics, embedded systems, mechanical design, and software — from first principles to first product." />
+
+	<!-- Open Graph -->
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content="Materia Lab" />
+	<meta property="og:title" content="Materia Lab — Engineering & Technology Consultancy" />
+	<meta property="og:description" content="Product development and engineering consultancy. Robotics, embedded systems, mechanical design, and software — from first principles to first product." />
+	<meta property="og:image" content="https://materia-lab.uk/og-image.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:url" content="https://materia-lab.uk" />
+
+	<!-- Twitter/X -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="Materia Lab — Engineering & Technology Consultancy" />
+	<meta name="twitter:description" content="Product development and engineering consultancy. Robotics, embedded systems, mechanical design, and software — from first principles to first product." />
+	<meta name="twitter:image" content="https://materia-lab.uk/og-image.png" />
 </svelte:head>
 
 <!-- Nav -->
