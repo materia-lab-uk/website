@@ -213,14 +213,16 @@
             <h2 class="text-lg font-medium mb-3">Files</h2>
             <div class="space-y-2">
               {#each allFiles as file}
-                <div class="flex items-center gap-3 text-sm text-text-muted border border-surface-border rounded-lg px-4 py-3">
-                  <span class="font-mono text-accent">&#x1F4CE;</span>
-                  <span>{file.name}</span>
+                <a href="/api/file?key={encodeURIComponent(file.key)}&project={submission.id}" class="flex items-center gap-3 text-sm text-text-muted border border-surface-border rounded-lg px-4 py-3 hover:border-accent/30 transition-colors">
+                  <svg class="w-5 h-5 text-accent shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                  </svg>
+                  <span class="hover:text-accent transition-colors">{file.name}</span>
                   <span class="text-xs">({Math.round(file.size / 1024)}KB)</span>
                   {#if file.source === 'chat'}
                     <span class="text-xs font-mono text-accent/50">chat</span>
                   {/if}
-                </div>
+                </a>
               {/each}
             </div>
           </div>
