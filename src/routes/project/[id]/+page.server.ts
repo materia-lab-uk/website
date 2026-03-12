@@ -26,5 +26,5 @@ export const load: PageServerLoad = async ({ params, platform, locals }) => {
 		throw error(403, 'Access denied');
 	}
 
-	return { submission, isAdmin: admin };
+	return { submission: { ...submission, githubRepo: submission.githubRepo || null }, isAdmin: admin };
 };

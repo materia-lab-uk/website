@@ -11,6 +11,17 @@
   let newMessage = $state('');
   let sending = $state(false);
   let chatFile: File | null = $state(null);
+  let githubRepo = $state(submission.githubRepo || '');
+  let editingRepo = $state(false);
+
+  async function saveGithubRepo() {
+    await fetch(`/api/project/${submission.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ githubRepo: githubRepo.trim() || null }),
+    });
+    editingRepo = false;
+  }
 
   async function sendMessage(user: { fullName?: string; firstName?: string }) {
     if ((!newMessage.trim() && !chatFile) || sending) return;
@@ -196,6 +207,30 @@
             </div>
           {/each}
         </div>
+      </div>
+    {/if}
+
+    <!-- GitHub Repo -->
+    {#if githubRepo || isAdmin}
+      <div class="mb-10">
+        <h2 class="text-lg font-medium mb-3">Repository</h2>
+        {#if editingRepo}
+          <form onsubmit={(e: Event) => { e.preventDefault(); saveGithubRepo(); }} class="flex gap-3">
+            <input type="text" bind:value={githubRepo} placeholder="https://github.com/org/repo"
+              class="flex-1 bg-surface-alt border border-surface-border rounded-lg px-4 py-3 text-text text-sm placeholder:text-text-muted/50 focus:outline-none focus:border-accent transition-colors" />
+            <button type="submit" class="px-4 py-2 bg-accent text-surface text-sm font-medium rounded hover:bg-accent-dim transition-colors">Save</button>
+            <button type="button" onclick={() => { editingRepo = false; }} class="px-4 py-2 text-sm text-text-muted hover:text-accent transition-colors">Cancel</button>
+          </form>
+        {:else if githubRepo}
+          <div class="flex items-center gap-3">
+            <a href={githubRepo} target="_blank" rel="noopener" class="text-sm text-accent hover:text-accent-dim transition-colors font-mono">{githubRepo.replace('https://github.com/', '')}</a>
+            {#if isAdmin}
+              <button type="button" onclick={() => { editingRepo = true; }} class="text-xs text-text-muted hover:text-accent transition-colors">edit</button>
+            {/if}
+          </div>
+        {:else if isAdmin}
+          <button type="button" onclick={() => { editingRepo = true; }} class="text-sm text-text-muted hover:text-accent transition-colors">+ Link a GitHub repository</button>
+        {/if}
       </div>
     {/if}
 

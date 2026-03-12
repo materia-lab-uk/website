@@ -28,5 +28,33 @@ export const GET: RequestHandler = async ({ params, platform, locals }) => {
 		status: submission.status,
 		messages: submission.messages || [],
 		assessment: submission.assessment,
+		githubRepo: submission.githubRepo || null,
 	});
+};
+
+export const PATCH: RequestHandler = async ({ params, request, platform, locals }) => {
+	const userId = locals.session?.userId;
+	if (!userId || !isAdmin(userId)) {
+		throw error(403, 'Admin access required');
+	}
+
+	const kv = platform?.env?.SUBMISSIONS;
+	if (!kv) {
+		throw error(503, 'Service unavailable');
+	}
+
+	const data = await kv.get(`submission:${params.id}`);
+	if (!data) {
+		throw error(404, 'Project not found');
+	}
+
+	const submission = JSON.parse(data);
+	const updates = await request.json();
+
+	if (updates.githubRepo !== undefined) {
+		submission.githubRepo = updates.githubRepo;
+	}
+
+	await kv.put(`submission:${params.id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
+	return json({ success: true });
 };
