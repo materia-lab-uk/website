@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
+
   let step = $state(1);
   let submitting = $state(false);
   let submitted = $state(false);
@@ -78,7 +80,7 @@
       if (res.ok) {
         const result = await res.json();
         if (result.id) {
-          window.location.href = `/project/${result.id}`;
+          await goto(`/project/${result.id}`, { replaceState: true });
           return;
         }
         submitted = true;
