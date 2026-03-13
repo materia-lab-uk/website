@@ -6,8 +6,9 @@
 	import SignedOut from 'clerk-sveltekit/client/SignedOut.svelte';
 	import UserButton from 'clerk-sveltekit/client/UserButton.svelte';
 
-	let { children } = $props();
+	let { children, data } = $props();
 	let menuOpen = $state(false);
+	const { isAdmin } = data;
 </script>
 
 <svelte:head>
@@ -46,6 +47,9 @@
 			<a href="/blog" class="text-sm text-text-muted hover:text-accent transition-colors">Blog</a>
 			<SignedIn>
 				<a href="/projects" class="text-sm text-text-muted hover:text-accent transition-colors">My Projects</a>
+				{#if isAdmin}
+					<a href="/admin" class="text-sm text-text-muted hover:text-accent transition-colors">Admin</a>
+				{/if}
 				<a href="/start" class="text-sm px-4 py-2 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors">
 					Start a project
 				</a>
@@ -80,6 +84,9 @@
 			<a href="/blog" onclick={() => { menuOpen = false; }} class="text-sm text-text-muted hover:text-accent transition-colors">Blog</a>
 			<SignedIn>
 				<a href="/projects" onclick={() => { menuOpen = false; }} class="text-sm text-text-muted hover:text-accent transition-colors">My Projects</a>
+				{#if isAdmin}
+					<a href="/admin" onclick={() => { menuOpen = false; }} class="text-sm text-text-muted hover:text-accent transition-colors">Admin</a>
+				{/if}
 				<a href="/start" onclick={() => { menuOpen = false; }} class="text-sm px-4 py-2 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors text-center">
 					Start a project
 				</a>

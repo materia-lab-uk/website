@@ -54,6 +54,9 @@ export const PATCH: RequestHandler = async ({ params, request, platform, locals 
 	if (updates.githubRepo !== undefined) {
 		submission.githubRepo = updates.githubRepo;
 	}
+	if (updates.messages !== undefined) {
+		submission.messages = updates.messages;
+	}
 
 	await kv.put(`submission:${params.id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
 	return json({ success: true });
