@@ -74,8 +74,9 @@
     }
   }
 
-  // Poll for new messages every 15 seconds
+  // Poll for updates every 15 seconds (new messages, assessment ready)
   $effect(() => {
+    if (!isPending && messages.length > 0) return; // no need to poll if assessment ready and has messages
     const interval = setInterval(async () => {
       try {
         const res = await fetch(`/api/project/${submission.id}`);
@@ -84,6 +85,10 @@
           if (data.messages?.length > messages.length) {
             messages = data.messages;
             setTimeout(scrollChat, 50);
+          }
+          // Reload page when assessment becomes ready
+          if (isPending && data.status === 'ready') {
+            window.location.reload();
           }
         }
       } catch {}
@@ -94,9 +99,6 @@
 
 <svelte:head>
   <title>Project Assessment — Materia Lab</title>
-  {#if isPending}
-    <meta http-equiv="refresh" content="30" />
-  {/if}
 </svelte:head>
 
 <section class="px-6 py-24">
