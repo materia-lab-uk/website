@@ -263,10 +263,10 @@
           <span class="text-text-muted text-sm">{messages.length} message{messages.length !== 1 ? 's' : ''} {chatOpen ? '▲' : '▼'}</span>
         </button>
 
-        <div class="{chatOpen ? '' : 'hidden'} lg:block lg:sticky lg:top-24 border border-surface-border rounded-lg p-6" style="max-height: calc(100vh - 8rem); display: flex; flex-direction: column;">
-          <h2 class="text-lg font-medium mb-4 hidden lg:block" style="flex-shrink: 0;">Discussion</h2>
+        <div class="{chatOpen ? 'flex' : 'hidden'} lg:flex lg:sticky lg:top-24 flex-col border border-surface-border rounded-lg p-6" style="max-height: calc(100vh - 8rem);">
+          <h2 class="text-lg font-medium mb-4 hidden lg:block shrink-0">Discussion</h2>
 
-          <div bind:this={chatContainer} style="flex: 1 1 0; min-height: 0; overflow-y: auto;" class="space-y-3 mb-4">
+          <div bind:this={chatContainer} class="space-y-3 mb-4 grow min-h-0 overflow-y-auto">
             {#if messages.length === 0}
               <p class="text-text-muted text-sm">No messages yet. Start the conversation below.</p>
             {:else}
@@ -285,7 +285,7 @@
           </div>
 
           <SignedIn let:user>
-            <div style="flex-shrink: 0;">
+            <div class="shrink-0">
               {#if chatFile}
                 <div class="flex items-center gap-2 mb-2 text-sm text-text-muted">
                   <span class="font-mono text-accent">&#x1F4CE;</span>
