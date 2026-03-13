@@ -79,16 +79,6 @@ export const POST: RequestHandler = async ({ request, platform, locals }) => {
 		messages: [],
 	};
 
-	// Add initial AI welcome message
-	const welcomeMessage: import('$lib/server/assess').Message = {
-		id: Math.random().toString(36).slice(2, 10) + Date.now().toString(36),
-		userId: 'ai',
-		userName: 'Materia Lab AI',
-		content: `Hi ${name.split(' ')[0]}! Thanks for submitting your project. While we prepare your detailed assessment, I'd love to understand your priorities a bit better — what's the most important outcome for you: speed to market, technical quality, cost efficiency, or something else?`,
-		createdAt: new Date().toISOString(),
-	};
-	submission.messages = [welcomeMessage];
-
 	// Save immediately and queue for async assessment generation
 	if (kv) {
 		await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });

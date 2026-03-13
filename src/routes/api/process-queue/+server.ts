@@ -25,13 +25,30 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 
 	const processedId = await processQueue(kv, apiKey);
 
-	// Notify client that assessment is ready
-	if (processedId && relayToken) {
+	// After assessment is ready: add initial AI chat message and notify client
+	if (processedId) {
 		const data = await kv.get(`submission:${processedId}`);
 		if (data) {
 			const submission: Submission = JSON.parse(data);
-			if (submission.status === 'ready' && submission.title) {
-				sendEmail(assessmentReadyEmail(submission.name, submission.email, processedId, submission.title), relayToken).catch(() => {});
+			if (submission.status === 'ready') {
+				// Add welcome message referencing the assessment
+				if (!submission.messages || submission.messages.length === 0) {
+					const firstName = submission.name.split(' ')[0];
+					const service = (submission.assessment as Record<string, unknown>)?.recommended_service || 'our recommended approach';
+					submission.messages = [{
+						id: Math.random().toString(36).slice(2, 10) + Date.now().toString(36),
+						userId: 'ai',
+						userName: 'Materia Lab AI',
+						content: `Hi ${firstName}! Your assessment is ready — we've recommended ${service}. Have a read through and let me know if you have any questions, or if there's anything you'd like to explore further.`,
+						createdAt: new Date().toISOString(),
+					}];
+					await kv.put(`submission:${processedId}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
+				}
+
+				// Send email notification
+				if (relayToken && submission.title) {
+					sendEmail(assessmentReadyEmail(submission.name, submission.email, processedId, submission.title), relayToken).catch(() => {});
+				}
 			}
 		}
 	}
