@@ -139,19 +139,24 @@ export async function processQueue(kv: KVNamespace, apiKey: string): Promise<str
 	// Generate
 	const assessment = await generateAssessment(submission, apiKey);
 	if (assessment) {
-		submission.assessment = assessment;
-		submission.title = (assessment?.title as string) || null;
-		submission.status = 'ready';
-		await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
+		// Re-read to avoid overwriting messages added during generation
+		const freshData = await kv.get(`submission:${id}`);
+		const fresh: Submission = freshData ? JSON.parse(freshData) : submission;
+		fresh.assessment = assessment;
+		fresh.title = (assessment?.title as string) || null;
+		fresh.status = 'ready';
+		await kv.put(`submission:${id}`, JSON.stringify(fresh), { expirationTtl: 60 * 60 * 24 * 90 });
 		queue.shift();
 		await kv.put('queue', JSON.stringify(queue));
 		await markGenerated(kv);
 		return id;
 	} else {
-		// Failed — revert to queued so it retries next run
+		// Failed — re-read and revert to queued so it retries next run
 		console.error(`Assessment generation failed for ${id}, will retry`);
-		submission.status = 'queued';
-		await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
+		const freshData = await kv.get(`submission:${id}`);
+		const fresh: Submission = freshData ? JSON.parse(freshData) : submission;
+		fresh.status = 'queued';
+		await kv.put(`submission:${id}`, JSON.stringify(fresh), { expirationTtl: 60 * 60 * 24 * 90 });
 		return null;
 	}
 }
