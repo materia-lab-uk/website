@@ -263,13 +263,13 @@
           <span class="text-text-muted text-sm">{messages.length} message{messages.length !== 1 ? 's' : ''} {chatOpen ? '▲' : '▼'}</span>
         </button>
 
-        <div class="{chatOpen ? '' : 'hidden'} lg:block lg:sticky lg:top-24 border border-surface-border rounded-lg p-6 flex flex-col" style="max-height: calc(100vh - 8rem);">
-          <h2 class="text-lg font-medium mb-4 hidden lg:block">Discussion</h2>
+        <div class="{chatOpen ? '' : 'hidden'} lg:block lg:sticky lg:top-24 border border-surface-border rounded-lg p-6" style="max-height: calc(100vh - 8rem); display: flex; flex-direction: column;">
+          <h2 class="text-lg font-medium mb-4 hidden lg:block" style="flex-shrink: 0;">Discussion</h2>
 
-          {#if messages.length === 0}
-            <p class="text-text-muted text-sm mb-4 flex-1">No messages yet. Start the conversation below.</p>
-          {:else}
-            <div class="space-y-3 mb-4 overflow-y-scroll flex-1 min-h-0" bind:this={chatContainer}>
+          <div bind:this={chatContainer} style="flex: 1 1 0; min-height: 0; overflow-y: auto;" class="space-y-3 mb-4">
+            {#if messages.length === 0}
+              <p class="text-text-muted text-sm">No messages yet. Start the conversation below.</p>
+            {:else}
               {#each messages as msg}
                 <div class="border {msg.userId === 'ai' ? 'border-accent/20 bg-accent-glow' : 'border-surface-border'} rounded-lg p-3">
                   <div class="flex justify-between items-baseline mb-1">
@@ -281,34 +281,34 @@
                   <p class="text-text-muted leading-relaxed text-sm">{msg.content}</p>
                 </div>
               {/each}
-            </div>
-          {/if}
+            {/if}
+          </div>
 
           <SignedIn let:user>
-            <div class="shrink-0">
-            {#if chatFile}
-              <div class="flex items-center gap-2 mb-2 text-sm text-text-muted">
-                <span class="font-mono text-accent">&#x1F4CE;</span>
-                <span class="truncate">{chatFile.name}</span>
-                <button type="button" onclick={() => { chatFile = null; }} class="text-xs text-accent hover:text-accent-dim shrink-0">&times;</button>
-              </div>
-            {/if}
-            <form onsubmit={(e: Event) => { e.preventDefault(); sendMessage(user); }} class="flex gap-2">
-              <input
-                type="text"
-                bind:value={newMessage}
-                placeholder="Type a message..."
-                class="flex-1 bg-surface-alt border border-surface-border rounded-lg px-3 py-2 text-sm text-text placeholder:text-text-muted/50 focus:outline-none focus:border-accent transition-colors"
-              />
-              <label class="flex items-center px-2 border border-surface-border rounded-lg cursor-pointer hover:border-accent/30 transition-colors">
-                <span class="text-text-muted text-sm">&#x1F4CE;</span>
-                <input type="file" class="hidden" onchange={(e: Event) => { const t = e.target as HTMLInputElement; chatFile = t.files?.[0] || null; }} />
-              </label>
-              <button type="submit" disabled={sending || (!newMessage.trim() && !chatFile)}
-                class="px-4 py-2 bg-accent text-surface text-sm font-medium rounded hover:bg-accent-dim transition-colors disabled:opacity-50">
-                Send
-              </button>
-            </form>
+            <div style="flex-shrink: 0;">
+              {#if chatFile}
+                <div class="flex items-center gap-2 mb-2 text-sm text-text-muted">
+                  <span class="font-mono text-accent">&#x1F4CE;</span>
+                  <span class="truncate">{chatFile.name}</span>
+                  <button type="button" onclick={() => { chatFile = null; }} class="text-xs text-accent hover:text-accent-dim shrink-0">&times;</button>
+                </div>
+              {/if}
+              <form onsubmit={(e: Event) => { e.preventDefault(); sendMessage(user); }} class="flex gap-2">
+                <input
+                  type="text"
+                  bind:value={newMessage}
+                  placeholder="Type a message..."
+                  class="flex-1 bg-surface-alt border border-surface-border rounded-lg px-3 py-2 text-sm text-text placeholder:text-text-muted/50 focus:outline-none focus:border-accent transition-colors"
+                />
+                <label class="flex items-center px-2 border border-surface-border rounded-lg cursor-pointer hover:border-accent/30 transition-colors">
+                  <span class="text-text-muted text-sm">&#x1F4CE;</span>
+                  <input type="file" class="hidden" onchange={(e: Event) => { const t = e.target as HTMLInputElement; chatFile = t.files?.[0] || null; }} />
+                </label>
+                <button type="submit" disabled={sending || (!newMessage.trim() && !chatFile)}
+                  class="px-4 py-2 bg-accent text-surface text-sm font-medium rounded hover:bg-accent-dim transition-colors disabled:opacity-50">
+                  Send
+                </button>
+              </form>
             </div>
           </SignedIn>
         </div>
