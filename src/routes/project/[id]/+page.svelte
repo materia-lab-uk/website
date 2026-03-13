@@ -263,13 +263,13 @@
           <span class="text-text-muted text-sm">{messages.length} message{messages.length !== 1 ? 's' : ''} {chatOpen ? '▲' : '▼'}</span>
         </button>
 
-        <div class="{chatOpen ? '' : 'hidden'} lg:block lg:sticky lg:top-24 border border-surface-border rounded-lg p-6 flex flex-col overflow-hidden" style="max-height: calc(100vh - 8rem);">
+        <div class="{chatOpen ? '' : 'hidden'} lg:block lg:sticky lg:top-24 border border-surface-border rounded-lg p-6 flex flex-col" style="max-height: calc(100vh - 8rem);">
           <h2 class="text-lg font-medium mb-4 hidden lg:block">Discussion</h2>
 
           {#if messages.length === 0}
             <p class="text-text-muted text-sm mb-4 flex-1">No messages yet. Start the conversation below.</p>
           {:else}
-            <div class="space-y-3 mb-4 overflow-y-auto flex-1 min-h-0" bind:this={chatContainer}>
+            <div class="space-y-3 mb-4 overflow-y-scroll flex-1 min-h-0" bind:this={chatContainer}>
               {#each messages as msg}
                 <div class="border {msg.userId === 'ai' ? 'border-accent/20 bg-accent-glow' : 'border-surface-border'} rounded-lg p-3">
                   <div class="flex justify-between items-baseline mb-1">
@@ -285,6 +285,7 @@
           {/if}
 
           <SignedIn let:user>
+            <div class="shrink-0">
             {#if chatFile}
               <div class="flex items-center gap-2 mb-2 text-sm text-text-muted">
                 <span class="font-mono text-accent">&#x1F4CE;</span>
@@ -308,6 +309,7 @@
                 Send
               </button>
             </form>
+            </div>
           </SignedIn>
         </div>
       </div>
