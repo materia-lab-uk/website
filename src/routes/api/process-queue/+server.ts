@@ -1,10 +1,10 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { processQueue } from '$lib/server/assess';
+import { processQueue, addToQueue } from '$lib/server/assess';
 import type { Submission } from '$lib/server/assess';
 import { sendEmail, assessmentReadyEmail } from '$lib/server/email';
 
-export const POST: RequestHandler = async ({ request, platform }) => {
+export const POST: RequestHandler = async ({ request, platform, url }) => {
 	const kv = platform?.env?.SUBMISSIONS;
 	const apiKey = platform?.env?.ANTHROPIC_API_KEY;
 	const cronSecret = platform?.env?.CRON_SECRET;
@@ -21,6 +21,21 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 	if (!kv || !apiKey) {
 		console.log(`--- process-queue: missing config. kv:${kv ? 'ok' : 'MISSING'} apiKey:${apiKey ? 'ok' : 'MISSING'} ---`);
 		return json({ error: 'Missing configuration' }, { status: 503 });
+	}
+
+	// Re-queue any stuck 'processing' items
+	const requeueId = url.searchParams.get('requeue');
+	if (requeueId) {
+		const data = await kv.get(`submission:${requeueId}`);
+		if (data) {
+			const sub = JSON.parse(data);
+			if (sub.status === 'processing') {
+				sub.status = 'queued';
+				await kv.put(`submission:${requeueId}`, JSON.stringify(sub), { expirationTtl: 60 * 60 * 24 * 90 });
+				await addToQueue(kv, requeueId);
+				console.log(`Re-queued stuck submission ${requeueId}`);
+			}
+		}
 	}
 
 	const processedId = await processQueue(kv, apiKey);

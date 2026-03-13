@@ -138,15 +138,20 @@ export async function processQueue(kv: KVNamespace, apiKey: string): Promise<str
 
 	// Generate
 	const assessment = await generateAssessment(submission, apiKey);
-	submission.assessment = assessment;
-	submission.title = (assessment?.title as string) || null;
-	submission.status = 'ready';
-	await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
-
-	// Remove from queue and mark rate limit
-	queue.shift();
-	await kv.put('queue', JSON.stringify(queue));
-	await markGenerated(kv);
-
-	return id;
+	if (assessment) {
+		submission.assessment = assessment;
+		submission.title = (assessment?.title as string) || null;
+		submission.status = 'ready';
+		await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
+		queue.shift();
+		await kv.put('queue', JSON.stringify(queue));
+		await markGenerated(kv);
+		return id;
+	} else {
+		// Failed — revert to queued so it retries next run
+		console.error(`Assessment generation failed for ${id}, will retry`);
+		submission.status = 'queued';
+		await kv.put(`submission:${id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
+		return null;
+	}
 }
