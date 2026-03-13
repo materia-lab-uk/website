@@ -12,14 +12,11 @@ export const POST: RequestHandler = async ({ request, platform, url }) => {
 
 	// Protect with a shared secret
 	const auth = request.headers.get('authorization');
-	console.log(`--- process-queue: cronSecret:${cronSecret ? 'set' : 'MISSING'} apiKey:${apiKey ? 'set' : 'MISSING'} relayToken:${relayToken ? 'set' : 'MISSING'} auth:${auth ? 'provided' : 'MISSING'} ---`);
 	if (!cronSecret || auth !== `Bearer ${cronSecret}`) {
-		console.log(`--- process-queue: auth failed. expected:Bearer ${cronSecret?.slice(0, 4)}... got:${auth?.slice(0, 15)}... ---`);
 		return json({ error: 'Unauthorized' }, { status: 401 });
 	}
 
 	if (!kv || !apiKey) {
-		console.log(`--- process-queue: missing config. kv:${kv ? 'ok' : 'MISSING'} apiKey:${apiKey ? 'ok' : 'MISSING'} ---`);
 		return json({ error: 'Missing configuration' }, { status: 503 });
 	}
 

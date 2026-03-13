@@ -90,15 +90,9 @@ export const POST: RequestHandler = async ({ request, platform, locals }) => {
 		await kv.put(`user:${userId}:projects`, JSON.stringify(userProjects));
 	}
 
-	console.log(`--- New project enquiry [${id}] user:${userId} files:${uploadedFiles.length} relayToken:${relayToken ? 'set' : 'MISSING'} ---`);
-
-	// Send email notification
+	// Send email notification (fire-and-forget)
 	if (relayToken) {
-		sendEmail(newSubmissionEmail(name, id, description), relayToken)
-			.then((ok) => console.log(`Email notification sent: ${ok}`))
-			.catch((e) => console.error('Email notification failed:', e));
-	} else {
-		console.warn('EMAIL_RELAY_TOKEN not set — skipping email notification');
+		sendEmail(newSubmissionEmail(name, id, description), relayToken).catch(() => {});
 	}
 
 	return json({ success: true, id, status: 'queued' });
