@@ -263,7 +263,7 @@
               <span class="text-xs font-medium text-accent">Materia Lab AI</span>
               <span class="font-mono text-[10px] text-text-muted">12 Mar 16:23</span>
             </div>
-            <p class="text-text-muted leading-relaxed text-sm">That's right — the AI explores the design space from your requirements and generates multiple candidates in parallel. Each one gets automatically checked against physical constraints (forces, reach, payload, material limits) before being presented. For a project like yours, you'd likely see 8–12 initial candidates across the spatula, gripper, and pan-tilt approaches, narrowed down to 3–4 validated finalists with trade-off analysis. You'd get STEP files for each, ready to import into your CAD tool. Nicole would walk you through the results and help you pick the strongest direction.</p>
+            <p class="text-text-muted leading-relaxed text-sm">That's right — the AI explores the design space from your requirements and generates multiple candidates in parallel. Each one gets automatically checked against physical constraints (forces, reach, payload, material limits) before being presented. For a project like yours, you'd likely see 8–12 initial candidates across the spatula, gripper, and pan-tilt approaches, narrowed down to 3–4 validated finalists with trade-off analysis. Once you've picked a direction, Nicole builds out the proper parametric CAD models ready for prototyping.</p>
           </div>
           <div class="border border-surface-border rounded-lg p-3">
             <div class="flex justify-between items-baseline mb-1">

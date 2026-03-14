@@ -32,7 +32,7 @@
       'Requirements-first design exploration — not constrained by starting geometry',
       'Automated physics verification (FEA) before you see a single concept',
       'Three times as many validated concepts for the same budget and timeline',
-      'STEP files ready for import into your CAD tool of choice',
+      'AI-generated concepts refined into production-ready parametric CAD models by our engineers',
     ],
   };
 
