@@ -137,7 +137,7 @@
   <div class="max-w-4xl mx-auto">
     <p class="font-mono text-xs tracking-[0.3em] text-accent mb-8 uppercase">About</p>
     <p class="text-lg leading-relaxed text-text-muted mb-4">
-      Materia Lab is founded by <strong class="text-text font-normal">Dr Nicole Martin</strong> —
+      Materia Lab is founded by <a href="https://nic.materia-lab.uk" target="_blank" rel="noopener" class="text-text font-normal hover:text-accent transition-colors">Dr Nicole Martin</a> —
       a physicist and engineer with 12+ years across Formula One, aerospace, robotics,
       academia, and product development.
     </p>
