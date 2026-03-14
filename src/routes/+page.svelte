@@ -54,8 +54,8 @@
       <a href="/start" class="px-6 py-3 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors">
         Start a project
       </a>
-      <a href="#services" class="px-6 py-3 border border-surface-border text-text-muted rounded hover:border-accent hover:text-accent transition-colors">
-        Learn more
+      <a href="/example" class="px-6 py-3 border border-surface-border text-text-muted rounded hover:border-accent hover:text-accent transition-colors">
+        See an example
       </a>
     </div>
   </div>
@@ -126,8 +126,8 @@
       <a href="/start" class="px-8 py-4 bg-accent text-surface font-medium rounded text-lg hover:bg-accent-dim transition-colors">
         Start a project
       </a>
-      <a href="https://cloud.materia-lab.uk/index.php/apps/appointments/pub/r4qzDD1NYtq7yv4l/form" target="_blank" rel="noopener" class="px-8 py-4 border border-surface-border text-text-muted font-medium rounded text-lg hover:border-accent hover:text-accent transition-colors">
-        Book a call
+      <a href="/example" class="px-8 py-4 border border-surface-border text-text-muted font-medium rounded text-lg hover:border-accent hover:text-accent transition-colors">
+        See an example
       </a>
     </div>
   </div>
