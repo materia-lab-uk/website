@@ -26,7 +26,7 @@
           element: '#tour-title',
           popover: {
             title: 'AI-Generated Title',
-            description: 'Our AI reads your project description and generates a clear title and assessment — usually within a few minutes of submitting.',
+            description: 'Our AI reads your project description and generates a clear title and initial analysis — usually within a few minutes of submitting.',
             side: 'bottom',
             align: 'start',
           },
@@ -35,7 +35,7 @@
           element: '#tour-summary',
           popover: {
             title: 'Project Summary',
-            description: 'A concise overview of what you\'re trying to build and the key challenges involved. This shows we\'ve understood your brief.',
+            description: 'A concise overview of what you\'re looking to build and the key challenges involved. This shows the AI has understood your brief.',
             side: 'bottom',
             align: 'start',
           },
@@ -44,7 +44,7 @@
           element: '#tour-feasibility',
           popover: {
             title: 'Feasibility Analysis',
-            description: 'An honest assessment of whether your idea is achievable within your stated budget and timeline — no sugar-coating.',
+            description: 'An honest analysis of whether your idea is achievable within your stated budget and timeline — no sugar-coating.',
             side: 'bottom',
             align: 'start',
           },
@@ -53,7 +53,7 @@
           element: '#tour-approach',
           popover: {
             title: 'Recommended Approach',
-            description: 'A step-by-step breakdown of how we\'d tackle the project. This gives you a clear picture of the engineering work involved.',
+            description: 'Key areas and considerations for the project. This gives you a clear picture of what\'s involved — Nicole refines this during the discovery call.',
             side: 'bottom',
             align: 'start',
           },
@@ -62,7 +62,7 @@
           element: '#tour-metrics',
           popover: {
             title: 'Service, Timeline & Budget',
-            description: 'We recommend the right engagement type, give you a realistic timeline, and a budget range — so there are no surprises.',
+            description: 'Initial estimates for the engagement type, timeline, and budget — a starting point for your conversation with Nicole.',
             side: 'top',
             align: 'center',
           },
@@ -80,7 +80,7 @@
           element: '#tour-next-steps',
           popover: {
             title: 'Next Steps',
-            description: 'Clear actions to move forward — including booking a free discovery call with Nicole to discuss the assessment in detail.',
+            description: 'Clear actions to move forward — including booking a free discovery call with Nicole to discuss the analysis in detail.',
             side: 'bottom',
             align: 'start',
           },
@@ -89,7 +89,7 @@
           element: '#tour-chat',
           popover: {
             title: 'AI Discussion',
-            description: 'You can chat with our AI to ask follow-up questions about the assessment. Nicole reads the conversation before your discovery call, so it saves time.',
+            description: 'You can chat with our AI to ask follow-up questions about the analysis. Nicole reads the conversation before your discovery call, so it saves time.',
             side: 'top',
             align: 'start',
           },
@@ -98,7 +98,7 @@
           element: '#tour-nicole',
           popover: {
             title: 'Nicole Joins the Conversation',
-            description: 'After reviewing the assessment and chat, Nicole can jump into the discussion directly — adding technical insight and next steps.',
+            description: 'After reviewing the analysis and chat, Nicole jumps into the discussion directly — adding her own technical insight.',
             side: 'top',
             align: 'start',
           },
@@ -120,8 +120,8 @@
 </script>
 
 <svelte:head>
-  <title>Example Project Assessment — Materia Lab</title>
-  <meta name="description" content="See what a Materia Lab project assessment looks like. AI-powered technical feasibility analysis for your product idea." />
+  <title>Example Project Analysis — Materia Lab</title>
+  <meta name="description" content="See what a Materia Lab project analysis looks like. AI-powered initial technical analysis for your product idea." />
 </svelte:head>
 
 <section class="px-6 py-24">
@@ -129,8 +129,8 @@
     <!-- Example banner -->
     <div id="tour-banner" class="border border-accent/30 bg-accent-glow rounded-lg px-6 py-4 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <p class="text-sm font-medium text-accent">Example Assessment</p>
-        <p class="text-xs text-text-muted mt-1">This is a sample project assessment to show what you'll receive when you submit a project.</p>
+        <p class="text-sm font-medium text-accent">Example Analysis</p>
+        <p class="text-xs text-text-muted mt-1">This is a sample project analysis to show what you'll receive when you submit a project.</p>
       </div>
       <div class="flex gap-3 shrink-0">
         <button onclick={startTour}
@@ -143,7 +143,7 @@
       </div>
     </div>
 
-    <p class="font-mono text-xs tracking-[0.3em] text-accent mb-6 uppercase">Project Assessment</p>
+    <p class="font-mono text-xs tracking-[0.3em] text-accent mb-6 uppercase">Project Analysis</p>
 
     <div class="flex-1 min-w-0">
       <div id="tour-title">
@@ -164,7 +164,7 @@
       </div>
 
       <div id="tour-approach" class="mb-10">
-        <h2 class="text-lg font-medium mb-3">Recommended Approach</h2>
+        <h2 class="text-lg font-medium mb-3">Possible Approach</h2>
         <ul class="space-y-2">
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent mt-1 shrink-0">&#x2022;</span>
@@ -191,15 +191,15 @@
 
       <div id="tour-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         <div class="border border-surface-border rounded-lg p-5">
-          <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Recommended</p>
+          <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Suggested service</p>
           <p class="text-text font-medium">Feasibility Sprint</p>
         </div>
         <div class="border border-surface-border rounded-lg p-5">
-          <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Timeline</p>
+          <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Initial timeline estimate</p>
           <p class="text-text font-medium">4–6 weeks for a working prototype (vision + basic mechanical flip); 10–14 weeks for a refined, repeatable system.</p>
         </div>
         <div class="border border-surface-border rounded-lg p-5">
-          <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Budget range</p>
+          <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Initial budget estimate</p>
           <p class="text-text font-medium">£8k–£18k for a functional prototype, depending on whether you use an off-the-shelf robotic arm or build custom actuators.</p>
         </div>
       </div>
@@ -249,7 +249,7 @@
               <span class="text-xs font-medium text-accent">Materia Lab AI</span>
               <span class="font-mono text-[10px] text-text-muted">12 Mar 15:04</span>
             </div>
-            <p class="text-text-muted leading-relaxed text-sm">Hi Alex! Your assessment is ready — we've recommended Feasibility Sprint. Have a read through and let me know if you have any questions, or if there's anything you'd like to explore further.</p>
+            <p class="text-text-muted leading-relaxed text-sm">Hi Alex! Your initial analysis is ready — we've suggested Feasibility Sprint as a starting point. Have a read through and let me know if you have any questions. Nicole will review this ahead of your discovery call.</p>
           </div>
           <div class="border border-surface-border rounded-lg p-3">
             <div class="flex justify-between items-baseline mb-1">
@@ -293,7 +293,7 @@
       <!-- Bottom CTA -->
       <div id="tour-cta" class="border border-accent/30 bg-accent-glow rounded-lg px-6 py-8 text-center">
         <h2 class="text-xl font-medium mb-2">Get your own assessment</h2>
-        <p class="text-sm text-text-muted mb-6">Submit your project idea and receive an AI-generated technical assessment in minutes. Free, confidential, and covered by a mutual NDA.</p>
+        <p class="text-sm text-text-muted mb-6">Submit your project idea and receive an AI-generated initial analysis in minutes. Free, confidential, and covered by a mutual NDA.</p>
         <a href="/start" class="inline-block px-6 py-3 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors">
           Start your project
         </a>

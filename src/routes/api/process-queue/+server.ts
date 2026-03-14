@@ -46,12 +46,13 @@ export const POST: RequestHandler = async ({ request, platform, url }) => {
 				// Add welcome message referencing the assessment
 				if (!submission.messages || submission.messages.length === 0) {
 					const firstName = submission.name.split(' ')[0];
-					const service = (submission.assessment as Record<string, unknown>)?.recommended_service || 'our recommended approach';
+					const assessment = submission.assessment as Record<string, unknown>;
+					const service = assessment?.suggested_service || assessment?.recommended_service || 'a possible approach';
 					submission.messages = [{
 						id: Math.random().toString(36).slice(2, 10) + Date.now().toString(36),
 						userId: 'ai',
 						userName: 'Materia Lab AI',
-						content: `Hi ${firstName}! Your assessment is ready — we've recommended ${service}. Have a read through and let me know if you have any questions, or if there's anything you'd like to explore further.`,
+						content: `Hi ${firstName}! Your initial analysis is ready — we've suggested ${service} as a starting point. Have a read through and let me know if you have any questions. Nicole will review this ahead of your discovery call.`,
 						createdAt: new Date().toISOString(),
 					}];
 					await kv.put(`submission:${processedId}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });

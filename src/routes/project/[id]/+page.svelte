@@ -98,12 +98,12 @@
 </script>
 
 <svelte:head>
-  <title>Project Assessment — Materia Lab</title>
+  <title>Project Analysis — Materia Lab</title>
 </svelte:head>
 
 <section class="px-6 py-24">
   <div class="max-w-7xl mx-auto">
-    <p class="font-mono text-xs tracking-[0.3em] text-accent mb-6 uppercase">Project Assessment</p>
+    <p class="font-mono text-xs tracking-[0.3em] text-accent mb-6 uppercase">Project Analysis</p>
 
     <div class="flex flex-col lg:flex-row gap-8">
       <!-- Left: Assessment -->
@@ -155,7 +155,7 @@
           </div>
 
           <div class="mb-10">
-            <h2 class="text-lg font-medium mb-3">Recommended Approach</h2>
+            <h2 class="text-lg font-medium mb-3">Possible Approach</h2>
             <ul class="space-y-2">
               {#each a.approach as step}
                 <li class="flex gap-3 text-text-muted">
@@ -168,15 +168,15 @@
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
             <div class="border border-surface-border rounded-lg p-5">
-              <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Recommended</p>
-              <p class="text-text font-medium">{a.recommended_service}</p>
+              <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Suggested service</p>
+              <p class="text-text font-medium">{a.suggested_service || a.recommended_service}</p>
             </div>
             <div class="border border-surface-border rounded-lg p-5">
-              <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Timeline</p>
+              <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Initial timeline estimate</p>
               <p class="text-text font-medium">{a.estimated_timeline}</p>
             </div>
             <div class="border border-surface-border rounded-lg p-5">
-              <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Budget range</p>
+              <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Initial budget estimate</p>
               <p class="text-text font-medium">{a.estimated_budget_range}</p>
             </div>
           </div>
