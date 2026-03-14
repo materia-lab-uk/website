@@ -26,6 +26,7 @@
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.78.0",
 		"@clerk/backend": "^3.0.1",
-		"clerk-sveltekit": "^0.4.2"
+		"clerk-sveltekit": "^0.4.2",
+		"driver.js": "^1.4.0"
 	}
 }
