@@ -57,6 +57,9 @@ export const PATCH: RequestHandler = async ({ params, request, platform, locals 
 	if (updates.messages !== undefined) {
 		submission.messages = updates.messages;
 	}
+	if (updates.status !== undefined) {
+		submission.status = updates.status;
+	}
 
 	await kv.put(`submission:${params.id}`, JSON.stringify(submission), { expirationTtl: 60 * 60 * 24 * 90 });
 	return json({ success: true });

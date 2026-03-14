@@ -55,7 +55,7 @@ export interface Submission {
 	ndaAgreed: boolean;
 	files: UploadedFile[];
 	createdAt: string;
-	status: 'queued' | 'processing' | 'ready';
+	status: 'queued' | 'processing' | 'ready' | 'archived';
 	title: string | null;
 	assessment: Record<string, unknown> | null;
 	messages: Message[];
