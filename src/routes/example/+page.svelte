@@ -155,12 +155,12 @@
 
       <div id="tour-summary" class="mb-10">
         <h2 class="text-lg font-medium mb-3">Summary</h2>
-        <p class="text-text-muted leading-relaxed">You're looking to build a robot capable of autonomously detecting and flipping pancakes on a griddle or pan. This is an interesting challenge that combines computer vision, mechanical actuation, and real-time control—but the timeline and budget you've outlined will need careful scoping to be realistic.</p>
+        <p class="text-text-muted leading-relaxed">You're looking to build a robot capable of autonomously detecting and flipping pancakes on a griddle or pan. This is an interesting challenge that combines computer vision, mechanical actuation, and real-time control. The core difficulty here is the mechanical flip itself — there are several fundamentally different ways to approach it (spatula, gripper, pan-tilt), each with different trade-offs. This is a project that could benefit significantly from exploring multiple design directions in parallel rather than committing to one early.</p>
       </div>
 
       <div id="tour-feasibility" class="mb-10">
         <h2 class="text-lg font-medium mb-3">Feasibility</h2>
-        <p class="text-text-muted leading-relaxed">The core concept is technically feasible, but not within your stated 1–2 week timeline and under-£5k budget as a complete working system. Pancake detection via computer vision is straightforward; the mechanical challenge is designing a gripper or flipper that can handle the fragile, variable geometry of a partially-cooked pancake without tearing it. You'd need to prioritize: are we targeting a proof-of-concept demo, or a kitchen-ready appliance?</p>
+        <p class="text-text-muted leading-relaxed">The core concept is technically feasible. Vision-based pancake detection is straightforward — the real engineering challenge is the flip mechanism. A spatula-style flipper needs to slide under a fragile, partially-cooked pancake without tearing it. A gripper approach avoids that but introduces its own complexity around grip force and deformation. A pan-rotation mechanism sidesteps both but constrains the cooking surface. These are fundamentally different design directions, and the right choice depends on constraints you'd want to explore before committing. Your stated 1–2 week timeline and under-£5k budget would need to be revisited — but a focused initial exploration could narrow the field quickly.</p>
       </div>
 
       <div id="tour-approach" class="mb-10">
@@ -168,23 +168,23 @@
         <ul class="space-y-2">
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent mt-1 shrink-0">&#x2022;</span>
-            <span class="leading-relaxed">Define the mechanical constraint: will the robot use a spatula-style flipper, a gripper arm, or a pan-rotation mechanism? Each has different complexity.</span>
+            <span class="leading-relaxed">Use AI-driven design exploration to generate and evaluate multiple flipper mechanism concepts in parallel — spatula, gripper, and pan-tilt — rather than picking one upfront and hoping it works.</span>
           </li>
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent mt-1 shrink-0">&#x2022;</span>
-            <span class="leading-relaxed">Implement computer vision (OpenCV or similar) to detect pancakes on the cooking surface and estimate their doneness.</span>
+            <span class="leading-relaxed">For each mechanism concept, automatically verify against physical constraints: payload, reach envelope, force required to lift/flip, and compatibility with the cooking surface geometry.</span>
           </li>
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent mt-1 shrink-0">&#x2022;</span>
-            <span class="leading-relaxed">Design and 3D-print or machine a prototype flipper mechanism with sufficient stiffness and control.</span>
+            <span class="leading-relaxed">Implement a computer vision module (OpenCV or similar) to detect pancakes on the cooking surface and estimate doneness from colour and edge characteristics.</span>
           </li>
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent mt-1 shrink-0">&#x2022;</span>
-            <span class="leading-relaxed">Integrate a robotic arm (e.g., robot arm kit) or custom actuator with real-time feedback control.</span>
+            <span class="leading-relaxed">Select the most promising mechanism from the validated candidates and 3D-print a working prototype for physical testing.</span>
           </li>
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent mt-1 shrink-0">&#x2022;</span>
-            <span class="leading-relaxed">Develop the control software to coordinate vision, timing, and mechanical motion.</span>
+            <span class="leading-relaxed">Develop the control software to coordinate vision, timing, and mechanical motion — with the flip trajectory tuned to the chosen mechanism.</span>
           </li>
         </ul>
       </div>
@@ -192,15 +192,15 @@
       <div id="tour-metrics" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         <div class="border border-surface-border rounded-lg p-5">
           <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Suggested service</p>
-          <p class="text-text font-medium">Feasibility Sprint</p>
+          <p class="text-text font-medium">Materia Forge</p>
         </div>
         <div class="border border-surface-border rounded-lg p-5">
           <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Initial timeline estimate</p>
-          <p class="text-text font-medium">4–6 weeks for a working prototype (vision + basic mechanical flip); 10–14 weeks for a refined, repeatable system.</p>
+          <p class="text-text font-medium">2–3 weeks for the AI design exploration and mechanism selection; 4–6 weeks additional for a working prototype with vision integration.</p>
         </div>
         <div class="border border-surface-border rounded-lg p-5">
           <p class="font-mono text-xs text-accent mb-2 uppercase tracking-wider">Initial budget estimate</p>
-          <p class="text-text font-medium">£8k–£18k for a functional prototype, depending on whether you use an off-the-shelf robotic arm or build custom actuators.</p>
+          <p class="text-text font-medium">£4k–£6k for the Forge exploration phase (mechanism design + validation); £8k–£14k total including prototype build and vision integration.</p>
         </div>
       </div>
 
@@ -209,15 +209,15 @@
         <ul class="space-y-2">
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent mt-1 shrink-0">&#x26A0;</span>
-            <span class="leading-relaxed">Pancake geometry and consistency vary widely; training vision models and tuning the flipper for repeatable success is harder than it sounds.</span>
+            <span class="leading-relaxed">Pancake geometry and consistency vary widely — a mechanism that works for thick American pancakes may fail on thin crêpes. Defining the target pancake spec early will narrow the design space.</span>
           </li>
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent mt-1 shrink-0">&#x26A0;</span>
-            <span class="leading-relaxed">Mechanical design to avoid tearing the pancake while achieving a clean flip requires iterative prototyping—difficult to do in 1–2 weeks.</span>
+            <span class="leading-relaxed">The flip itself is a dynamic event — the mechanism needs to be fast enough to prevent tearing but controlled enough for a clean landing. This likely needs physical tuning even after simulation.</span>
           </li>
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent mt-1 shrink-0">&#x26A0;</span>
-            <span class="leading-relaxed">Real-time synchronization between vision, gripper position, and flip timing is a control systems challenge that often needs live tuning.</span>
+            <span class="leading-relaxed">Heat exposure near the cooking surface will constrain material and sensor choices. Any mechanism or camera mount needs to tolerate sustained proximity to a 200°C+ surface.</span>
           </li>
         </ul>
       </div>
@@ -227,15 +227,15 @@
         <ol class="space-y-2">
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent font-mono text-sm mt-0.5 shrink-0">1.</span>
-            <span class="leading-relaxed">Book a discovery call with Nicole to discuss your core goal: are you building a novelty demo, a research prototype, or a product? This will unlock a realistic scope and timeline.</span>
+            <span class="leading-relaxed">Book a discovery call with Nicole to discuss your core goal — novelty demo, research prototype, or product? — and define the mechanical envelope (cooking surface type, size, approach direction).</span>
           </li>
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent font-mono text-sm mt-0.5 shrink-0">2.</span>
-            <span class="leading-relaxed">Provide more detail on your mechanical constraints: what's your cooking surface (griddle, pan, skillet)? What size pancakes? Can the robot approach from above, or must it fit around existing kitchen equipment?</span>
+            <span class="leading-relaxed">Nicole will scope a Materia Forge engagement to explore the flip mechanism design space — generating multiple validated concepts with trade-off analysis before committing to a build.</span>
           </li>
           <li class="flex gap-3 text-text-muted">
             <span class="text-accent font-mono text-sm mt-0.5 shrink-0">3.</span>
-            <span class="leading-relaxed">We'll prepare a detailed Feasibility Sprint proposal (1–2 weeks, £2–3k) to validate the vision + mechanical approach and de-risk the biggest unknowns before committing to full development.</span>
+            <span class="leading-relaxed">From the Forge output, select the strongest mechanism candidate and move into a focused prototype build with vision integration.</span>
           </li>
         </ol>
       </div>
@@ -249,42 +249,35 @@
               <span class="text-xs font-medium text-accent">Materia Lab AI</span>
               <span class="font-mono text-[10px] text-text-muted">12 Mar 15:04</span>
             </div>
-            <p class="text-text-muted leading-relaxed text-sm">Hi Alex! Your initial analysis is ready — we've suggested Feasibility Sprint as a starting point. Have a read through and let me know if you have any questions. Nicole will review this ahead of your discovery call.</p>
+            <p class="text-text-muted leading-relaxed text-sm">Hi Alex! Your initial analysis is ready — we've suggested Materia Forge as a starting point, since there are several fundamentally different ways to approach the flip mechanism. Have a read through and let me know if you have any questions. Nicole will review this ahead of your discovery call.</p>
           </div>
           <div class="border border-surface-border rounded-lg p-3">
             <div class="flex justify-between items-baseline mb-1">
               <span class="text-xs font-medium text-text">Alex T</span>
               <span class="font-mono text-[10px] text-text-muted">12 Mar 16:22</span>
             </div>
-            <p class="text-text-muted leading-relaxed text-sm">This is really helpful. I'm leaning towards a proof-of-concept demo first. Could the vision system use a standard webcam, or would I need something more specialised?</p>
+            <p class="text-text-muted leading-relaxed text-sm">Interesting — I hadn't heard of Materia Forge before. So the AI would actually generate different mechanism designs and test them against physics before I see anything? How many concepts would I typically get?</p>
           </div>
           <div class="border border-accent/20 bg-accent-glow rounded-lg p-3">
             <div class="flex justify-between items-baseline mb-1">
               <span class="text-xs font-medium text-accent">Materia Lab AI</span>
-              <span class="font-mono text-[10px] text-text-muted">12 Mar 16:22</span>
+              <span class="font-mono text-[10px] text-text-muted">12 Mar 16:23</span>
             </div>
-            <p class="text-text-muted leading-relaxed text-sm">A standard USB webcam would work fine for a proof-of-concept — you mainly need a top-down or angled view of the cooking surface. A 1080p webcam with decent colour reproduction is enough to detect pancake edges and estimate browning. For a production system you'd eventually want something more robust (e.g., an industrial camera with better heat tolerance and fixed focus), but for the feasibility sprint a £30–50 webcam will do the job.</p>
+            <p class="text-text-muted leading-relaxed text-sm">That's right — the AI explores the design space from your requirements and generates multiple candidates in parallel. Each one gets automatically checked against physical constraints (forces, reach, payload, material limits) before being presented. For a project like yours, you'd likely see 8–12 initial candidates across the spatula, gripper, and pan-tilt approaches, narrowed down to 3–4 validated finalists with trade-off analysis. You'd get STEP files for each, ready to import into your CAD tool. Nicole would walk you through the results and help you pick the strongest direction.</p>
           </div>
           <div class="border border-surface-border rounded-lg p-3">
             <div class="flex justify-between items-baseline mb-1">
               <span class="text-xs font-medium text-text">Alex T</span>
               <span class="font-mono text-[10px] text-text-muted">12 Mar 17:05</span>
             </div>
-            <p class="text-text-muted leading-relaxed text-sm">Perfect. And what about the flipper itself — is there an off-the-shelf robot arm that could handle this, or would it need to be custom?</p>
-          </div>
-          <div class="border border-accent/20 bg-accent-glow rounded-lg p-3">
-            <div class="flex justify-between items-baseline mb-1">
-              <span class="text-xs font-medium text-accent">Materia Lab AI</span>
-              <span class="font-mono text-[10px] text-text-muted">12 Mar 17:05</span>
-            </div>
-            <p class="text-text-muted leading-relaxed text-sm">For a proof-of-concept, something like a uArm or Dobot Magician with a custom spatula end-effector would work — they're affordable, have decent repeatability, and there are good Python libraries for control. The main custom work would be designing and 3D-printing the spatula attachment and tuning the flip motion profile. For a production system you'd likely want a custom mechanism, but for the sprint an off-the-shelf arm keeps costs down and lets us focus on the hard parts: vision and timing.</p>
+            <p class="text-text-muted leading-relaxed text-sm">That's a much smarter way to do it than just picking the spatula approach and hoping for the best. The budget for the Forge phase looks reasonable too. I'll book a call.</p>
           </div>
           <div id="tour-nicole" class="border border-accent/20 bg-accent-glow rounded-lg p-3">
             <div class="flex justify-between items-baseline mb-1">
               <span class="text-xs font-medium text-accent">Nicole</span>
               <span class="font-mono text-[10px] text-text-muted">13 Mar 09:30</span>
             </div>
-            <p class="text-text-muted leading-relaxed text-sm">Hey Alex — I've had a read through. Good instinct going proof-of-concept first. One thing I'd flag: the Dobot's payload is only about 500g, which is fine for a single pancake but might limit you if you want to scale up later. We can discuss the trade-offs on the call. I've also worked on a similar vision-guided pick-and-place system before so I've got some ideas on the flip timing. Book a slot whenever suits.</p>
+            <p class="text-text-muted leading-relaxed text-sm">Hey Alex — I've had a read through. The Forge approach is a good fit here because the mechanism choice will drive everything else downstream (arm selection, control strategy, even the vision requirements). I've worked on similar vision-guided pick-and-place systems before and the mechanism is always where projects like this succeed or fail. Let's use the Forge exploration to rule out the weak options early rather than discovering them during the build. Book a slot whenever suits.</p>
           </div>
           <p class="text-center text-xs text-text-muted pt-2">Each project includes AI-assisted discussion to refine your brief before the discovery call.</p>
         </div>
