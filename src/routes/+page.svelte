@@ -24,6 +24,18 @@
     },
   ];
 
+  const forge = {
+    title: 'Materia Forge',
+    subtitle: 'AI-Driven Prototype Design',
+    description: 'We use AI to explore more of the design space than any traditional approach. You tell us what a part needs to do — our AI generates and physics-validates multiple design candidates in parallel, including solutions your engineers wouldn\'t have tried.',
+    points: [
+      'Requirements-first design exploration — not constrained by starting geometry',
+      'Automated physics verification (FEA) before you see a single concept',
+      'Three times as many validated concepts for the same budget and timeline',
+      'STEP files ready for import into your CAD tool of choice',
+    ],
+  };
+
   const capabilities = [
     'Robotics & Mechatronics',
     'Embedded Systems',
@@ -33,6 +45,7 @@
     'Computer Vision',
     'Mathematical Modelling',
     'Rapid Prototyping',
+    'AI-Driven Design',
   ];
 </script>
 
@@ -75,6 +88,32 @@
           <p class="text-text-muted leading-relaxed">{service.description}</p>
         </div>
       {/each}
+    </div>
+  </div>
+</section>
+
+<!-- Materia Forge -->
+<section class="px-6 py-24 border-t border-surface-border">
+  <div class="max-w-6xl mx-auto">
+    <div class="border border-accent/30 bg-accent-glow rounded-lg p-8 md:p-12">
+      <div class="flex flex-col md:flex-row md:items-start gap-8">
+        <div class="flex-1">
+          <p class="font-mono text-xs tracking-[0.3em] text-accent mb-3 uppercase">{forge.subtitle}</p>
+          <h2 class="text-3xl md:text-4xl font-light tracking-tight mb-4">{forge.title}</h2>
+          <p class="text-text-muted leading-relaxed mb-6">{forge.description}</p>
+          <ul class="space-y-3 mb-8">
+            {#each forge.points as point}
+              <li class="flex gap-3 text-text-muted text-sm">
+                <span class="text-accent mt-0.5 shrink-0">&#x2022;</span>
+                <span class="leading-relaxed">{point}</span>
+              </li>
+            {/each}
+          </ul>
+          <a href="/start" class="inline-block px-6 py-3 bg-accent text-surface font-medium rounded hover:bg-accent-dim transition-colors">
+            Start a Forge project
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </section>

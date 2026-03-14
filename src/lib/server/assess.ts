@@ -17,7 +17,7 @@ Structure your response as JSON with these fields:
 - "summary": 2-3 sentence plain-English summary of what the client is looking to build, addressed to them directly
 - "feasibility": honest analysis of technical feasibility (2-3 sentences), addressed to the client
 - "approach": bullet list (as array of strings) of the key areas and considerations for this project — frame as "things to explore" rather than a fixed plan
-- "suggested_service": one of "Feasibility Sprint", "Concept Development", "Product Development", or "Fractional CTO" — this is a starting point, not a final recommendation
+- "suggested_service": one of "Feasibility Sprint", "Concept Development", "Product Development", "Fractional CTO", or "Materia Forge" — this is a starting point, not a final recommendation. Suggest "Materia Forge" when the project would benefit from AI-driven design exploration — e.g. when there are multiple possible mechanical/physical approaches and the client would benefit from seeing a broader set of validated design candidates than traditional engineering would produce in the same timeframe
 - "estimated_timeline": initial timeline estimate (make clear it's subject to scoping)
 - "estimated_budget_range": rough initial budget range in GBP (make clear it depends on scope)
 - "key_risks": array of 2-3 key technical risks or unknowns the client should be aware of
