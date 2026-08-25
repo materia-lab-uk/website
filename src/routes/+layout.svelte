@@ -118,7 +118,7 @@
 			<a href="mailto:nic@materia-lab.uk" class="hover:text-accent transition-colors">nic@materia-lab.uk</a>
 			<a href="https://github.com/materia-lab-uk" class="hover:text-accent transition-colors">GitHub</a>
 			<a href="https://dev.to/dr_nicole" class="hover:text-accent transition-colors">Blog</a>
-			<a href="https://linkedin.com/in/dr-nick-martin" class="hover:text-accent transition-colors">LinkedIn</a>
+			<a href="https://www.linkedin.com/in/dr-nicole-martin" class="hover:text-accent transition-colors">LinkedIn</a>
 		</div>
 	</div>
 	<div class="max-w-6xl mx-auto mt-8 pt-8 border-t border-surface-border">
